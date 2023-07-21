@@ -69,7 +69,7 @@ double calculateTStatistic(const vector<double>& group1, const vector<double>& g
     return t_statistic;
 }
 
-int main() 
+int mainProcess() 
 {
     setlocale(LC_CTYPE, "ru_RU.UTF-8");
 
@@ -142,4 +142,9 @@ int main()
     sqlite3_finalize(stmt);
     sqlite3_close(db);
     return 0;
+}
+
+int main()
+{
+    mainProcess();
 }

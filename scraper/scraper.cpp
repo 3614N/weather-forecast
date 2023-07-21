@@ -6,9 +6,6 @@
 #include "libxml/xpath.h"
 #include <sqlite3.h>
 #include <vector>
-#include <chrono>
-#include <thread>
-#include <atomic>
 
 using namespace std;
 
@@ -56,25 +53,9 @@ public:
 	}
 };
 
-//анимация вращения палки :)
-void waitingAnimation(atomic<bool>& animationActive) {
-	const char frames[] = { '-', '\\', '|', '/' };
-	int frameIndex = 0;
 
-	while (animationActive) {
-		cout << "\r" << frames[frameIndex++] << flush;
-		frameIndex %= sizeof(frames) / sizeof(frames[0]);
-		this_thread::sleep_for(chrono::milliseconds(200));
-	}
-
-	cout << "\r  \r";
-}
-
-int main()
+int mainScraper()
 {
-	// запуск анимации палки
-	atomic<bool> animationActive(true);
-	thread animationThread(waitingAnimation, ref(animationActive));
 
 	// получение верстки сайта с погодой
 	string url = "http://www.pogodaiklimat.ru/monitor.php";
@@ -169,9 +150,6 @@ int main()
 		weather.addLocation(dLatitude, dLongitude, iAltitude); // запись координат
 	}
 
-	// остановка анимации
-	animationActive = false;
-	animationThread.join();
 
 	// удаление прошлой бд
 	const char* filename = "weather_statistic.db";
