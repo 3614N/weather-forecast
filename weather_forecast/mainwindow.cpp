@@ -288,9 +288,9 @@ string mainProcess(double x, double y)
 
     // подключение библиотеки и открытие таблицы в базе данных
     sqlite3* db;
-    int rc = sqlite3_open("data.sqlite", &db);
+    int rc = sqlite3_open("weather_statistic", &db);
     sqlite3_stmt* stmt;
-    const char* query = "SELECT * FROM weather";
+    const char* query = "SELECT * FROM table_data";
     rc = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
 
     // импорт значений с таблицы
