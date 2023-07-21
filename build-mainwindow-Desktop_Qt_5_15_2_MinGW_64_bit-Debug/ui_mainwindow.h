@@ -29,8 +29,8 @@ public:
     QGridLayout *gridLayout;
     QLabel *label_2;
     QLabel *label;
-    QLineEdit *lineEdit;
-    QLineEdit *lineEdit_2;
+    QLineEdit *latitude;
+    QLineEdit *longitude;
     QPushButton *pushButton;
     QPushButton *pushButton_2;
     QMenuBar *menubar;
@@ -58,15 +58,15 @@ public:
 
         gridLayout->addWidget(label, 0, 1, 1, 1);
 
-        lineEdit = new QLineEdit(centralwidget);
-        lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
+        latitude = new QLineEdit(centralwidget);
+        latitude->setObjectName(QString::fromUtf8("latitude"));
 
-        gridLayout->addWidget(lineEdit, 1, 0, 1, 1);
+        gridLayout->addWidget(latitude, 1, 0, 1, 1);
 
-        lineEdit_2 = new QLineEdit(centralwidget);
-        lineEdit_2->setObjectName(QString::fromUtf8("lineEdit_2"));
+        longitude = new QLineEdit(centralwidget);
+        longitude->setObjectName(QString::fromUtf8("longitude"));
 
-        gridLayout->addWidget(lineEdit_2, 1, 1, 1, 1);
+        gridLayout->addWidget(longitude, 1, 1, 1, 1);
 
         pushButton = new QPushButton(centralwidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
@@ -118,6 +118,8 @@ public:
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         label_2->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt;\">\320\224\320\276\320\273\320\263\320\276\321\202\320\260</span></p></body></html>", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt;\">\320\250\320\270\321\200\320\276\321\202\320\260</span></p></body></html>", nullptr));
+        latitude->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
+        longitude->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
         pushButton->setText(QCoreApplication::translate("MainWindow", "\320\237\320\276\321\201\321\207\320\270\321\202\320\260\321\202\321\214", nullptr));
         pushButton_2->setText(QCoreApplication::translate("MainWindow", "\320\236\320\261\320\275\320\276\320\262\320\270\321\202\321\214 \320\264\320\260\320\275\320\275\321\213\320\265", nullptr));
     } // retranslateUi
