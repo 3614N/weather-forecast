@@ -10,15 +10,15 @@
 #include <vector>
 #include <cmath>
 #include <sqlite3.h>
-/*#include "libxml/HTMLparser.h"
+#include "libxml/HTMLparser.h"
 #include "libxml/xpath.h"
-#include <curl/curl.h>*/
+#include <curl/curl.h>
 
 #define R 6371.0 // радиус Земли
 #define M_PI 3.14159265358979323846 // число пи
 
 using namespace std;
-/*
+
 // хз спизженный кусок кода
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, string* output) {
     size_t totalSize = size * nmemb;
@@ -62,7 +62,7 @@ public:
         height.push_back(ht);
     }
 };
-*/
+
 // градусы в радианы
 double toRadians(double degrees)
 {
@@ -122,9 +122,9 @@ double calculateTStatistic(const vector<double>& group1, const vector<double>& g
 
     return t_statistic;
 }
-/*
+
 // парсер
-void mainScraper()
+int mainScraper()
 {
 
     // получение верстки сайта с погодой
@@ -222,17 +222,16 @@ void mainScraper()
 
 
     // удаление прошлой бд
-    const char* filename = "weather_statistic.db";
+    const char* filename = "statistic.sqlite";
     remove(filename);
 
     // подключение SQLite3 и создание новой бд
     sqlite3* db;
-    int rc = sqlite3_open("weather_statistic.db", &db);
+    int rc = sqlite3_open("statistic.sqlite", &db);
 
     // создание шаблона таблицы
     char* errMsg;
-    string createTableQuery = "CREATE TABLE IF NOT EXISTS table_data ("
-        "link TEXT, "
+    string createTableQuery = "CREATE TABLE IF NOT EXISTS weather ("
         "city TEXT, "
         "temperature REAL, "
         "latitude REAL, "
@@ -240,26 +239,25 @@ void mainScraper()
         "height INTEGER);";
 
     rc = sqlite3_exec(db, createTableQuery.c_str(), nullptr, nullptr, &errMsg);
-    string insertQuery = "INSERT OR REPLACE INTO table_data (link, city, temperature, latitude, longitude, height) VALUES (?, ?, ?, ?, ?, ?);";
+    string insertQuery = "INSERT OR REPLACE INTO weather (city, temperature, latitude, longitude, height) VALUES (?, ?, ?, ?, ?);";
     sqlite3_stmt* stmt;
     // заполнение таблицы
     for (size_t i = 0; i < weather.link.size(); ++i)
     {
         rc = sqlite3_prepare_v2(db, insertQuery.c_str(), -1, &stmt, nullptr);
 
-        sqlite3_bind_text(stmt, 1, weather.link[i].c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 2, weather.city[i].c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_double(stmt, 3, weather.temperature[i]);
-        sqlite3_bind_double(stmt, 4, weather.latitude[i]);
-        sqlite3_bind_double(stmt, 5, weather.longitude[i]);
-        sqlite3_bind_int(stmt, 6, weather.height[i]);
+        sqlite3_bind_text(stmt, 1, weather.city[i].c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_double(stmt, 2, weather.temperature[i]);
+        sqlite3_bind_double(stmt, 3, weather.latitude[i]);
+        sqlite3_bind_double(stmt, 4, weather.longitude[i]);
+        sqlite3_bind_int(stmt, 5, weather.height[i]);
 
         rc = sqlite3_step(stmt);
 
         sqlite3_finalize(stmt);
     }
 
-    cout << "Данные успешно добавлены в таблицу." << endl;
+    return 0;
 
     sqlite3_close(db);
 
@@ -270,9 +268,9 @@ void mainScraper()
     xmlCleanupParser();
 
 }
-*/
+
 // калькулятор
-string mainProcess(double x, double y)
+int mainProcess(double x, double y)
 {
     qDebug() << QString::number(x);
     qDebug() << QString::number(y);
@@ -334,16 +332,16 @@ string mainProcess(double x, double y)
         {
             sqlite3_finalize(stmt);
             sqlite3_close(db);
-            return "Использовать осреднение";
+            return 0;
         }
         else
         {
             sqlite3_finalize(stmt);
             sqlite3_close(db);
-            return "Использовать интерполяцию ";
+            return 1;
         }
     }
-    else return "Воруем у Вадима "; // :)
+    else return 2; // :)
 
 
     // закрываем базу данных
@@ -360,16 +358,28 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+
     delete ui;
 }
-
 
 void MainWindow::on_pushButton_clicked()
 {
     double a = ui->latitude->text().toDouble();
     double b = ui->longitude->text().toDouble();
-    string answer = mainProcess(a, b);
-    QString xAnswer = QString::fromStdString(answer);
+    int answer = mainProcess(a, b);
+    QString xAnswer;
+    if (answer == 0)
+    {
+        xAnswer = "Использовать осреднение";
+    }
+    else if (answer == 1)
+    {
+        xAnswer = "Использовать интерполяцию";
+    }
+    else
+    {
+        xAnswer = "Украсть у Вадима";
+    }
 
     QDialog *dialog = new QDialog(this);
     dialog->setWindowTitle("Answer");
@@ -379,7 +389,25 @@ void MainWindow::on_pushButton_clicked()
     QFont font = label->font();
     font.setPointSize(16);
     label->setFont(font);
-    dialog->setFixedSize(400, 300);
+    dialog->setFixedSize(400, 100);
     dialog->exec();
+}
+
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    QDialog *dialog = new QDialog(this);
+    dialog->setWindowTitle("Status");
+    QLabel *label = new QLabel("Генерируется актуальная база данных...\nОкно автоматически закроется при завершении", dialog);
+    QFont font = label->font();
+    font.setPointSize(16);
+    label->setFont(font);
+    dialog->setFixedSize(600, 100);
+    dialog->exec();
+
+    int status = mainScraper();
+
+    dialog->close();
+
 }
 
