@@ -3,6 +3,7 @@
 #include <QDialog>
 #include <QPushButton>
 #include <QString>
+#include <QDebug>
 #include <iostream>
 #include <cstdio>
 #include <string>
@@ -273,8 +274,8 @@ void mainScraper()
 // калькулятор
 string mainProcess(double x, double y)
 {
-    setlocale(LC_CTYPE, "ru_RU.UTF-8");
-
+    qDebug() << QString::number(x);
+    qDebug() << QString::number(y);
     // вектора характеристик метеовышек
     vector<string> city;
     vector<double> temperature;
@@ -288,9 +289,9 @@ string mainProcess(double x, double y)
 
     // подключение библиотеки и открытие таблицы в базе данных
     sqlite3* db;
-    int rc = sqlite3_open("weather_statistic", &db);
+    int rc = sqlite3_open("statistic.sqlite", &db);
     sqlite3_stmt* stmt;
-    const char* query = "SELECT * FROM table_data";
+    const char* query = "SELECT * FROM weather";
     rc = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
 
     // импорт значений с таблицы
@@ -301,6 +302,8 @@ string mainProcess(double x, double y)
         latitude.push_back(sqlite3_column_double(stmt, 2));
         longitude.push_back(sqlite3_column_double(stmt, 3));
         altitude.push_back(sqlite3_column_double(stmt, 4));
+        qDebug() << QString::fromStdString(city[0]);
+
     }
 
     // вычисление ближайших метеостанций  радиусе 500км
@@ -327,8 +330,18 @@ string mainProcess(double x, double y)
         double critical_t = abs(t_statistic) / sqrt((1.0 / nearleft.size()) + (1.0 / nearright.size()));
 
         // вывод процедуры
-        if (t_statistic > critical_t) return "Использовать осреднение";
-        else return "Использовать интерполяцию ";
+        if (t_statistic > critical_t)
+        {
+            sqlite3_finalize(stmt);
+            sqlite3_close(db);
+            return "Использовать осреднение";
+        }
+        else
+        {
+            sqlite3_finalize(stmt);
+            sqlite3_close(db);
+            return "Использовать интерполяцию ";
+        }
     }
     else return "Воруем у Вадима "; // :)
 
@@ -336,7 +349,6 @@ string mainProcess(double x, double y)
     // закрываем базу данных
     sqlite3_finalize(stmt);
     sqlite3_close(db);
-    return 0;
 }
 
 MainWindow::MainWindow(QWidget *parent)
