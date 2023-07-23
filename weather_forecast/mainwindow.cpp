@@ -102,29 +102,38 @@ double calculateTStatistic(const vector<double>& group1, const vector<double>& g
     double mean1 = calculateMean(group1);
     double mean2 = calculateMean(group2);
 
-    double variance1 = 0.0;
-    double variance2 = 0.0;
+    double omega1 = 0.0;
+    double omega2 = 0.0;
     for (double value : group1)
     {
-        variance1 += pow(value - mean1, 2);
+        omega1 += pow(value - mean1, 2);
     }
     for (double value : group2)
     {
-        variance2 += pow(value - mean2, 2);
+        omega2 += pow(value - mean2, 2);
     }
 
-    variance1 /= (group1.size() - 1);
-    variance2 /= (group2.size() - 1);
+    omega1 /= group1.size();
+    omega2 /= group2.size();
 
-    double numerator = mean1 - mean2;
-    double denominator = sqrt((variance1 / group1.size()) + (variance2 / group2.size()));
-    double t_statistic = numerator / denominator;
+    omega1 = sqrt(omega1);
+    omega2 = sqrt(omega2);
 
-    return t_statistic;
+    double m1 = omega1 / sqrt(mean1);
+    double m2 = omega2 / sqrt(mean2);
+
+    double t_statistic = (mean1 - mean2) / sqrt(pow(m1, 2) + pow(m2, 2));
+
+    if (t_statistic >= 0.05) {
+        return 0;
+    }
+    else {
+        return 1;
+    }
 }
 
 // парсер
-int mainScraper()
+void mainScraper()
 {
 
     // получение верстки сайта с погодой
@@ -165,6 +174,8 @@ int mainScraper()
                 //добавление в массив информации
                 weather.city.push_back(sCity);
                 weather.link.push_back(fullLink);
+                QString city1 = QString::fromStdString(sCity);
+                qDebug() << city1;
             }
 
             if (sName == "Яшкуль") break; // проверка на последний город
@@ -229,23 +240,24 @@ int mainScraper()
     sqlite3* db;
     int rc = sqlite3_open("statistic.sqlite", &db);
 
-    // создание шаблона таблицы
     char* errMsg;
     string createTableQuery = "CREATE TABLE IF NOT EXISTS weather ("
-        "city TEXT, "
-        "temperature REAL, "
-        "latitude REAL, "
-        "longitude REAL, "
-        "height INTEGER);";
+                              "city TEXT, "
+                              "temperature REAL, "
+                              "latitude REAL, "
+                              "longitude REAL, "
+                              "height INTEGER);";
 
     rc = sqlite3_exec(db, createTableQuery.c_str(), nullptr, nullptr, &errMsg);
     string insertQuery = "INSERT OR REPLACE INTO weather (city, temperature, latitude, longitude, height) VALUES (?, ?, ?, ?, ?);";
     sqlite3_stmt* stmt;
-    // заполнение таблицы
+
+    // Prepare the insert statement outside the loop
+    rc = sqlite3_prepare_v2(db, insertQuery.c_str(), -1, &stmt, nullptr);
+
     for (size_t i = 0; i < weather.link.size(); ++i)
     {
-        rc = sqlite3_prepare_v2(db, insertQuery.c_str(), -1, &stmt, nullptr);
-
+        // Bind the parameters for each row
         sqlite3_bind_text(stmt, 1, weather.city[i].c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_double(stmt, 2, weather.temperature[i]);
         sqlite3_bind_double(stmt, 3, weather.latitude[i]);
@@ -254,10 +266,12 @@ int mainScraper()
 
         rc = sqlite3_step(stmt);
 
-        sqlite3_finalize(stmt);
+        // Reset the statement for the next iteration
+        rc = sqlite3_reset(stmt);
     }
 
-    return 0;
+    // Finalize the statement after the loop is finished
+    sqlite3_finalize(stmt);
 
     sqlite3_close(db);
 
@@ -318,25 +332,7 @@ int mainProcess(double x, double y)
     // определение используемой процедуры
     if ((k >= 10) && (nearleft.size() >= 3) && (nearright.size() >= 3))
     {
-        // проверка на однородность
-        double t_statistic = calculateTStatistic(nearleft[0], nearright[0]);
-        int df = nearleft.size() + nearright.size() - 2;
-        double alpha = 0.05;
-        double critical_t = abs(t_statistic) / sqrt((1.0 / nearleft.size()) + (1.0 / nearright.size()));
-
-        // вывод процедуры
-        if (t_statistic > critical_t)
-        {
-            sqlite3_finalize(stmt);
-            sqlite3_close(db);
-            return 0;
-        }
-        else
-        {
-            sqlite3_finalize(stmt);
-            sqlite3_close(db);
-            return 1;
-        }
+        return calculateTStatistic(nearleft[0], nearright[0]);
     }
     else return 2; // :)
 
@@ -393,18 +389,16 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
+    mainScraper();
     QDialog *dialog = new QDialog(this);
     dialog->setWindowTitle("Status");
-    QLabel *label = new QLabel("Генерируется актуальная база данных...\nОкно автоматически закроется при завершении", dialog);
+    QLabel *label = new QLabel("База данных сгенерирована", dialog);
     QFont font = label->font();
     font.setPointSize(16);
     label->setFont(font);
-    dialog->setFixedSize(600, 100);
+    dialog->setFixedSize(400, 75);
     dialog->exec();
 
-    int status = mainScraper();
-
-    dialog->close();
 
 }
 

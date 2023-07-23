@@ -33,6 +33,7 @@ HEADERS += \
 FORMS += \
     mainwindow.ui
 
+RC_ICONS += mainwindow.ico
 
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

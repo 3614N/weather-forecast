@@ -19,7 +19,7 @@ CXXFLAGS      = -fno-keep-inline-dllexport -g -std=gnu++1z -Wall -Wextra -Wextra
 INCPATH       = -I..\weather_forecast -I. -IC:\vcpkg\installed\x64-windows\include -IC:\vcpkg\installed\x64-windows\include -IC:\Qt\5.15.2\mingw81_64\include -IC:\Qt\5.15.2\mingw81_64\include\QtWidgets -IC:\Qt\5.15.2\mingw81_64\include\QtGui -IC:\Qt\5.15.2\mingw81_64\include\QtANGLE -IC:\Qt\5.15.2\mingw81_64\include\QtCore -Idebug -I. -I/include -IC:\Qt\5.15.2\mingw81_64\mkspecs\win32-g++ 
 LINKER      =        g++
 LFLAGS        =        -Wl,-subsystem,windows -mthreads
-LIBS        =        -LC:\vcpkg\installed\x64-windows\lib -lsqlite3 -llibxml2 -llibcurl C:\Qt\5.15.2\mingw81_64\lib\libQt5Widgets.a C:\Qt\5.15.2\mingw81_64\lib\libQt5Gui.a C:\Qt\5.15.2\mingw81_64\lib\libQt5Core.a  -lmingw32 C:\Qt\5.15.2\mingw81_64\lib\libqtmain.a -LC:\openssl\lib -LC:\Utils\my_sql\mysql-5.7.25-winx64\lib -LC:\Utils\postgresql\pgsql\lib -lshell32 
+LIBS        =        -LC:\vcpkg\installed\x64-windows\lib -lsqlite3 -llibxml2 -llibcurl C:\Qt\5.15.2\mingw81_64\lib\libQt5Widgets.a C:\Qt\5.15.2\mingw81_64\lib\libQt5Gui.a C:\Qt\5.15.2\mingw81_64\lib\libQt5Core.a debug\mainwindow_resource_res.o  -lmingw32 C:\Qt\5.15.2\mingw81_64\lib\libqtmain.a -LC:\openssl\lib -LC:\Utils\my_sql\mysql-5.7.25-winx64\lib -LC:\Utils\postgresql\pgsql\lib -lshell32 
 QMAKE         = C:\Qt\5.15.2\mingw81_64\bin\qmake.exe
 DEL_FILE      = del
 CHK_DIR_EXISTS= if not exist
@@ -40,7 +40,7 @@ IDC           = idc
 IDL           = midl
 ZIP           = zip -r -9
 DEF_FILE      = 
-RES_FILE      = 
+RES_FILE      = debug\mainwindow_resource_res.o
 SED           = $(QMAKE) -install sed
 MOVE          = move
 
@@ -68,8 +68,11 @@ DESTDIR_TARGET = debug\mainwindow.exe
 first: all
 all: Makefile.Debug  debug/mainwindow.exe
 
-debug/mainwindow.exe: C:/Qt/5.15.2/mingw81_64/lib/libQt5Widgets.a C:/Qt/5.15.2/mingw81_64/lib/libQt5Gui.a C:/Qt/5.15.2/mingw81_64/lib/libQt5Core.a C:/Qt/5.15.2/mingw81_64/lib/libqtmain.a ui_mainwindow.h $(OBJECTS) 
+debug/mainwindow.exe: C:/Qt/5.15.2/mingw81_64/lib/libQt5Widgets.a C:/Qt/5.15.2/mingw81_64/lib/libQt5Gui.a C:/Qt/5.15.2/mingw81_64/lib/libQt5Core.a C:/Qt/5.15.2/mingw81_64/lib/libqtmain.a ui_mainwindow.h $(OBJECTS) debug/mainwindow_resource_res.o
 	$(LINKER) $(LFLAGS) -o $(DESTDIR_TARGET) $(OBJECTS)  $(LIBS)
+
+debug/mainwindow_resource_res.o: mainwindow_resource.rc
+	windres -i mainwindow_resource.rc -o debug\mainwindow_resource_res.o --include-dir=. $(DEFINES)
 
 qmake: FORCE
 	@$(QMAKE) -o Makefile.Debug ..\weather_forecast\mainwindow.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
@@ -81,6 +84,7 @@ dist:
 
 clean: compiler_clean 
 	-$(DEL_FILE) debug\main.o debug\mainwindow.o debug\moc_mainwindow.o
+	-$(DEL_FILE) debug\mainwindow_resource_res.o
 
 distclean: clean 
 	-$(DEL_FILE) .qmake.stash
