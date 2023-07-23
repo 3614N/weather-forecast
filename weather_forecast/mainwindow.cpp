@@ -272,8 +272,6 @@ int mainScraper()
 // калькулятор
 int mainProcess(double x, double y)
 {
-    qDebug() << QString::number(x);
-    qDebug() << QString::number(y);
     // вектора характеристик метеовышек
     vector<string> city;
     vector<double> temperature;
@@ -300,7 +298,6 @@ int mainProcess(double x, double y)
         latitude.push_back(sqlite3_column_double(stmt, 2));
         longitude.push_back(sqlite3_column_double(stmt, 3));
         altitude.push_back(sqlite3_column_double(stmt, 4));
-        qDebug() << QString::fromStdString(city[0]);
 
     }
 

@@ -27,11 +27,11 @@ class Ui_MainWindow
 public:
     QWidget *centralwidget;
     QGridLayout *gridLayout;
-    QLabel *label_2;
-    QLabel *label;
     QLineEdit *latitude;
     QLineEdit *longitude;
     QPushButton *pushButton;
+    QLabel *label;
+    QLabel *label_2;
     QPushButton *pushButton_2;
     QMenuBar *menubar;
     QStatusBar *statusbar;
@@ -40,24 +40,12 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(215, 245);
+        MainWindow->resize(311, 245);
         MainWindow->setStyleSheet(QString::fromUtf8("background-color: #FFFFFF;"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout = new QGridLayout(centralwidget);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
-        label_2 = new QLabel(centralwidget);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-        label_2->setStyleSheet(QString::fromUtf8("color: black;"));
-
-        gridLayout->addWidget(label_2, 0, 0, 1, 1);
-
-        label = new QLabel(centralwidget);
-        label->setObjectName(QString::fromUtf8("label"));
-        label->setStyleSheet(QString::fromUtf8("color: black;"));
-
-        gridLayout->addWidget(label, 0, 1, 1, 1);
-
         latitude = new QLineEdit(centralwidget);
         latitude->setObjectName(QString::fromUtf8("latitude"));
 
@@ -74,35 +62,91 @@ public:
         font.setUnderline(false);
         font.setStrikeOut(false);
         pushButton->setFont(font);
-        pushButton->setStyleSheet(QString::fromUtf8("background-color: #4CAF50; /* Green */\n"
+        pushButton->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"background-color: #4CAF50; /* Green */\n"
 "    border: none;\n"
 "    color: white;\n"
 "    padding: 15px 32px;\n"
 "    text-align: center;\n"
 "    text-decoration: none;\n"
 "    display: inline-block;\n"
-"    font-size: 16px;"));
+"    font-size: 16px;\n"
+"}\n"
+"QPushButton:hover {\n"
+"background-color: #76C479;\n"
+"    border: none;\n"
+"    color: white;\n"
+"    padding: 13px 30px;\n"
+"    text-align: center;\n"
+"    text-decoration: none;\n"
+"    display: inline-block;\n"
+"    font-size: 16px;\n"
+"}\n"
+"QPushButton:pressed {\n"
+"background-color: #3D8C40;\n"
+"    border: none;\n"
+"    color: white;\n"
+"    padding: 15px 32px;\n"
+"    text-align: center;\n"
+"    text-decoration: none;\n"
+"    display: inline-block;\n"
+"    font-size: 16px;\n"
+"}"));
 
         gridLayout->addWidget(pushButton, 2, 0, 1, 2);
+
+        label = new QLabel(centralwidget);
+        label->setObjectName(QString::fromUtf8("label"));
+        label->setStyleSheet(QString::fromUtf8("color: black;"));
+
+        gridLayout->addWidget(label, 0, 1, 1, 1);
+
+        label_2 = new QLabel(centralwidget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setStyleSheet(QString::fromUtf8("color: black;"));
+
+        gridLayout->addWidget(label_2, 0, 0, 1, 1);
 
         pushButton_2 = new QPushButton(centralwidget);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
         pushButton_2->setFont(font);
-        pushButton_2->setStyleSheet(QString::fromUtf8("background-color: #4CAF50; /* Green */\n"
+        pushButton_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"background-color: #4CAF50; /* Green */\n"
 "    border: none;\n"
 "    color: white;\n"
 "    padding: 15px 32px;\n"
 "    text-align: center;\n"
 "    text-decoration: none;\n"
 "    display: inline-block;\n"
-"    font-size: 16px;"));
+"    font-size: 16px;\n"
+"}\n"
+"QPushButton:hover {\n"
+"background-color: #76C479;\n"
+"    border: none;\n"
+"    color: white;\n"
+"    padding: 13px 30px;\n"
+"    text-align: center;\n"
+"    text-decoration: none;\n"
+"    display: inline-block;\n"
+"    font-size: 16px;\n"
+"}\n"
+"QPushButton:pressed {\n"
+"background-color: #3D8C40;\n"
+"    border: none;\n"
+"    color: white;\n"
+"    padding: 15px 32px;\n"
+"    text-align: center;\n"
+"    text-decoration: none;\n"
+"    display: inline-block;\n"
+"    font-size: 16px;\n"
+"}"));
 
         gridLayout->addWidget(pushButton_2, 3, 0, 1, 2);
 
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 215, 26));
+        menubar->setGeometry(QRect(0, 0, 311, 26));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -116,11 +160,11 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        label_2->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt;\">\320\224\320\276\320\273\320\263\320\276\321\202\320\260</span></p></body></html>", nullptr));
-        label->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt;\">\320\250\320\270\321\200\320\276\321\202\320\260</span></p></body></html>", nullptr));
         latitude->setText(QString());
         longitude->setText(QString());
         pushButton->setText(QCoreApplication::translate("MainWindow", "\320\237\320\276\321\201\321\207\320\270\321\202\320\260\321\202\321\214", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt;\">\320\250\320\270\321\200\320\276\321\202\320\260</span></p></body></html>", nullptr));
+        label_2->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt;\">\320\224\320\276\320\273\320\263\320\276\321\202\320\260</span></p></body></html>", nullptr));
         pushButton_2->setText(QCoreApplication::translate("MainWindow", "\320\236\320\261\320\275\320\276\320\262\320\270\321\202\321\214 \320\264\320\260\320\275\320\275\321\213\320\265", nullptr));
     } // retranslateUi
 
