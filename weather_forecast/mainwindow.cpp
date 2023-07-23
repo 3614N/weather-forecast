@@ -43,25 +43,6 @@ string GetWebsiteData(const string& url)
     return response;
 }
 
-// класс таблицы
-class Table
-{
-public:
-    // объявление массивов с данными метеостанций
-    vector<string> link;
-    vector<string> city;
-    vector<double> temperature;
-    vector<double> latitude;
-    vector<double> longitude;
-    vector<int> height;
-
-    void addLocation(double lat, double lon, int ht) //заполнение координат
-    {
-        latitude.push_back(lat);
-        longitude.push_back(lon);
-        height.push_back(ht);
-    }
-};
 
 // градусы в радианы
 double toRadians(double degrees)
@@ -101,9 +82,9 @@ double calculateTStatistic(const vector<double>& group1, const vector<double>& g
 {
     double mean1 = calculateMean(group1);
     double mean2 = calculateMean(group2);
-
     double omega1 = 0.0;
     double omega2 = 0.0;
+
     for (double value : group1)
     {
         omega1 += pow(value - mean1, 2);
@@ -113,11 +94,8 @@ double calculateTStatistic(const vector<double>& group1, const vector<double>& g
         omega2 += pow(value - mean2, 2);
     }
 
-    omega1 /= group1.size();
-    omega2 /= group2.size();
-
-    omega1 = sqrt(omega1);
-    omega2 = sqrt(omega2);
+    omega1 = sqrt(omega1 / group1.size());
+    omega2 = sqrt(omega2 / group2.size());
 
     double m1 = omega1 / sqrt(mean1);
     double m2 = omega2 / sqrt(mean2);
@@ -125,9 +103,11 @@ double calculateTStatistic(const vector<double>& group1, const vector<double>& g
     double t_statistic = (mean1 - mean2) / sqrt(pow(m1, 2) + pow(m2, 2));
 
     if (t_statistic >= 0.05) {
+        qDebug() << QString::number(t_statistic);
         return 0;
     }
     else {
+        qDebug() << QString::number(t_statistic);
         return 1;
     }
 }
@@ -135,13 +115,17 @@ double calculateTStatistic(const vector<double>& group1, const vector<double>& g
 // парсер
 void mainScraper()
 {
+    // вектора данных метеовышек
+    vector<string> link;
+    vector<string> city;
+    vector<double> temperature;
+    vector<double> latitude;
+    vector<double> longitude;
+    vector<int> height;
 
     // получение верстки сайта с погодой
     string url = "http://www.pogodaiklimat.ru/monitor.php";
     string html_string = GetWebsiteData(url);
-
-    // создание таблицы
-    Table weather;
 
 
     // подключение парсера
@@ -172,8 +156,8 @@ void mainScraper()
             if (sCity != "Ика") // город ика не содержит внутри себя данных, ломая код, поэтому его пропускаем
             {
                 //добавление в массив информации
-                weather.city.push_back(sCity);
-                weather.link.push_back(fullLink);
+                city.push_back(sCity);
+                link.push_back(fullLink);
                 QString city1 = QString::fromStdString(sCity);
                 qDebug() << city1;
             }
@@ -187,10 +171,10 @@ void mainScraper()
     }
 
     // парсинг всех сайтов с данными о российских метеовышках
-    for (string link : weather.link)
+    for (string l : link)
     {
         // получение со сгенерированной ссылки информации о средней сегодняшней температуры
-        string html_link = GetWebsiteData(link);
+        string html_link = GetWebsiteData(l);
         xmlDocPtr doc = htmlReadMemory(html_link.c_str(), html_link.length(), nullptr, nullptr, HTML_PARSE_RECOVER);
         xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
         const xmlChar* xpathExpr = BAD_CAST "//td[@class='green-color'][normalize-space()][1]";
@@ -208,7 +192,7 @@ void mainScraper()
                 sTemp = reinterpret_cast<char*>(temperature);
             }
             double temp = stod(sTemp);
-            weather.temperature.push_back(temp);
+            temperature.push_back(temp);
 
         }
         xmlFreeDoc(doc);
@@ -223,12 +207,10 @@ void mainScraper()
         string longitude = html_link.substr(longitudePos, html_link.find(",", longitudePos) - longitudePos);
         string altitude = html_link.substr(altitudePos, html_link.find(" м.", altitudePos) - altitudePos);
 
-        // превращение строки в другие типы данных
-        double dLatitude = stod(latitude);
-        double dLongitude = stod(longitude);
-        int iAltitude = stoi(altitude);
+        latitude.push_back(stod(latitude));
+        longitude.push_back(stod(longitude));
+        altitude.push_back(stoi(altitude));
 
-        weather.addLocation(dLatitude, dLongitude, iAltitude); // запись координат
     }
 
 
@@ -251,28 +233,22 @@ void mainScraper()
     rc = sqlite3_exec(db, createTableQuery.c_str(), nullptr, nullptr, &errMsg);
     string insertQuery = "INSERT OR REPLACE INTO weather (city, temperature, latitude, longitude, height) VALUES (?, ?, ?, ?, ?);";
     sqlite3_stmt* stmt;
-
-    // Prepare the insert statement outside the loop
     rc = sqlite3_prepare_v2(db, insertQuery.c_str(), -1, &stmt, nullptr);
 
-    for (size_t i = 0; i < weather.link.size(); ++i)
+    for (size_t i = 0; i < link.size(); ++i)
     {
-        // Bind the parameters for each row
-        sqlite3_bind_text(stmt, 1, weather.city[i].c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_double(stmt, 2, weather.temperature[i]);
-        sqlite3_bind_double(stmt, 3, weather.latitude[i]);
-        sqlite3_bind_double(stmt, 4, weather.longitude[i]);
-        sqlite3_bind_int(stmt, 5, weather.height[i]);
+        // заполнение таблицы
+        sqlite3_bind_text(stmt, 1, city[i].c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_double(stmt, 2, temperature[i]);
+        sqlite3_bind_double(stmt, 3, latitude[i]);
+        sqlite3_bind_double(stmt, 4, longitude[i]);
+        sqlite3_bind_int(stmt, 5, height[i]);
 
         rc = sqlite3_step(stmt);
-
-        // Reset the statement for the next iteration
         rc = sqlite3_reset(stmt);
     }
 
-    // Finalize the statement after the loop is finished
     sqlite3_finalize(stmt);
-
     sqlite3_close(db);
 
     // очистка памяти
