@@ -102,7 +102,7 @@ double calculateTStatistic(const vector<double>& group1, const vector<double>& g
 
     double t_statistic = (mean1 - mean2) / sqrt(pow(m1, 2) + pow(m2, 2));
 
-    if (t_statistic >= 0.05) {
+    if (abs(t_statistic) >= 0.05) {
         qDebug() << QString::number(t_statistic);
         return 0;
     }
