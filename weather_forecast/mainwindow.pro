@@ -6,6 +6,7 @@ CONFIG += c++17
 
 LIBS += -L.\lib -llibxml2 -llibcurl -lsqlite3
 
+
 SOURCES += \
     main.cpp \
     mainwindow.cpp
