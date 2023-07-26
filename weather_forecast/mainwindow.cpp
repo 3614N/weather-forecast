@@ -5,6 +5,7 @@
 #include "libs.h"
 #include "calculator.h"
 #include "scraper.h"
+#include "errors.h"
 
 using namespace std;
 
@@ -55,10 +56,11 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    mainScraper();
+    check();
+    //mainScraper();
     QDialog *dialog = new QDialog(this);
     dialog->setWindowTitle("Status");
-    QLabel *label = new QLabel("База данных сгенерирована", dialog);
+    QLabel *label = new QLabel("В разработке", dialog);
     QFont font = label->font();
     font.setPointSize(16);
     label->setFont(font);
