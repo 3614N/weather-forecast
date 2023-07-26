@@ -105,7 +105,7 @@ int mainProcess(double x, double y)
 
     }
 
-    qDebug() << QString::number(city.size());
+    //qDebug() << QString::number(city.size());
 
     // вычисление ближайших метеостанций  радиусе 500км
     for (int i = 0; i < city.size(); i++)
