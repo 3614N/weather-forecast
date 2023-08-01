@@ -6,6 +6,7 @@
 #include "calculator.h"
 #include "scraper.h"
 #include "errors.h"
+#include "connectDatabase.h"
 
 using namespace std;
 
@@ -24,26 +25,27 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
+
     double a = ui->latitude->text().toDouble();
     double b = ui->longitude->text().toDouble();
     int answer = mainProcess(a, b);
     QString xAnswer;
-    if (answer == 0)
+    if ((answer != -999.0) && (answer != 999.0))
     {
-        xAnswer = "Использовать осреднение";
+        xAnswer = "Погода в данной точке:\n" + QString::number(answer) + " градусов цельсия";
     }
-    else if (answer == 1)
+    else if (answer == 999.0)
     {
-        xAnswer = "Использовать интерполяцию";
+        xAnswer = "Текущий метод обработки:\nИспользовать интерполяцию";
     }
-    else
+    else if (answer == -999.0)
     {
-        xAnswer = "Украсть у Вадима";
+        xAnswer = "Текущий метод обработки:\nУкрасть у Вадима";
     }
 
     QDialog *dialog = new QDialog(this);
     dialog->setWindowTitle("Answer");
-    QLabel *label = new QLabel("Текущий метод обработки:\n" + xAnswer, dialog);
+    QLabel *label = new QLabel(xAnswer, dialog);
 
 
     QFont font = label->font();
@@ -56,17 +58,18 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
+
+    mainScraper();
     check();
-    //mainScraper();
+    connectDb();
     QDialog *dialog = new QDialog(this);
     dialog->setWindowTitle("Status");
-    QLabel *label = new QLabel("В разработке", dialog);
+    QLabel *label = new QLabel("Обновилось!", dialog);
     QFont font = label->font();
     font.setPointSize(16);
     label->setFont(font);
     dialog->setFixedSize(400, 75);
     dialog->exec();
-
 
 }
 

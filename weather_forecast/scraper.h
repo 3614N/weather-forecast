@@ -1,15 +1,25 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "libs.h"
 
 using namespace std;
 
-// хз спизженный кусок кода
+string time()
+{
+    const time_t tm = time(nullptr);
+    char buf[64];
+    strftime(buf, size(buf), "%d.%m.%Y", localtime(&tm));
+    string now = buf;
+    return now;
+
+}
+
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, string* output) {
     size_t totalSize = size * nmemb;
     output->append(static_cast<char*>(contents), totalSize);
     return totalSize;
 }
 
-// получение верстки сайта
 string GetWebsiteData(const string& url)
 {
     CURL* curl = curl_easy_init();
@@ -27,149 +37,158 @@ string GetWebsiteData(const string& url)
 }
 
 
-// парсер
 void mainScraper()
 {
-    // вектора данных метеовышек
     vector<string> link;
     vector<string> city;
     vector<double> temperature;
     vector<double> latitude;
     vector<double> longitude;
     vector<int> height;
+    vector<string> tables;
+    string s;
 
-    // получение верстки сайта с погодой
-    string url = "http://www.pogodaiklimat.ru/monitor.php";
-    string html_string = GetWebsiteData(url);
+    ifstream file("links.txt");
 
+    CURL* curl = curl_easy_init();
+    string response;
 
-    // подключение парсера
-    xmlInitParser();
-    LIBXML_TEST_VERSION
-        FILE* dummyStream;
-    freopen_s(&dummyStream, "nul", "w", stderr);
-
-    // парсинг нашей верстки
-    xmlDocPtr doc = htmlReadMemory(html_string.c_str(), html_string.length(), nullptr, nullptr, HTML_PARSE_RECOVER);
-    xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
-
-    // поиск по верстке элементов списка класса big-blue-billet__list_link
-    const xmlChar* xpathExpr = BAD_CAST "//li[contains(@class, 'big-blue-billet__list_link')]/a";
-    xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(xpathExpr, xpathCtx);
-    xmlNodeSetPtr nodes = xpathObj->nodesetval; //запись полученных элементов в nodes
-
-    if (nodes) { // проверка на заполненость дерева
-        for (int i = 0; i < nodes->nodeNr; ++i) { // прохождение по массиву циклом
-            xmlNodePtr node = nodes->nodeTab[i];
-            xmlChar* href = xmlGetProp(node, BAD_CAST "href"); // извлечение id города
-            xmlChar* content = xmlNodeGetContent(node); // получение названия города
-            string sName(reinterpret_cast<char*>(content));
-
-            string sHref((char*)href);
-            string fullLink = "http://www.pogodaiklimat.ru" + sHref; // генерация ссылки с информацией по городу
-            string sCity((char*)content); // запись названия города
-            if (sCity != "Ика") // город ика не содержит внутри себя данных, ломая код, поэтому его пропускаем
-            {
-                //добавление в массив информации
-                city.push_back(sCity);
-                link.push_back(fullLink);
-                QString city1 = QString::fromStdString(sCity);
-                //qDebug() << city1;
-            }
-
-            if (sName == "Яшкуль") break; // проверка на последний город
-
-            // очистка памяти
-            xmlFree(href);
-            xmlFree(content);
-        }
-    }
-
-    // парсинг всех сайтов с данными о российских метеовышках
-    for (string l : link)
+    while (getline(file, s))
     {
-        // получение со сгенерированной ссылки информации о средней сегодняшней температуры
-        string html_link = GetWebsiteData(l);
-        xmlDocPtr doc = htmlReadMemory(html_link.c_str(), html_link.length(), nullptr, nullptr, HTML_PARSE_RECOVER);
-        xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
-        const xmlChar* xpathExpr = BAD_CAST "//td[@class='green-color'][normalize-space()][1]";
-        xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(xpathExpr, xpathCtx);
-        xmlNodeSetPtr nodes = xpathObj->nodesetval;
-
-        if (nodes)
-        {
-            // обработка и запись информации о температуре
-            string sTemp;
-            for (int i = 0; i < nodes->nodeNr; ++i)
-            {
-                xmlNodePtr node = nodes->nodeTab[i];
-                xmlChar* temperature = xmlNodeGetContent(node);
-                sTemp = reinterpret_cast<char*>(temperature);
-            }
-            double temp = stod(sTemp);
-            temperature.push_back(temp);
-
-        }
-        xmlFreeDoc(doc);
-
-        // поиск вхождения в подстроку с информацией о расположении вышки
-        size_t latitudePos = html_link.find("широта") + 13;
-        size_t longitudePos = html_link.find("долгота") + 15;
-        size_t altitudePos = html_link.find("высота над уровнем моря") + 44;
-
-        // запись в строку найденной информации
-        string latitude = html_link.substr(latitudePos, html_link.find(",", latitudePos) - latitudePos);
-        string longitude = html_link.substr(longitudePos, html_link.find(",", longitudePos) - longitudePos);
-        string altitude = html_link.substr(altitudePos, html_link.find(" м.", altitudePos) - altitudePos);
-
-        latitude.push_back(stod(latitude));
-        longitude.push_back(stod(longitude));
-        altitude.push_back(stoi(altitude));
-
+        link.push_back(s);
     }
+    file.close();
 
-
-    // удаление прошлой бд
-    const char* filename = "statistic.sqlite";
-    remove(filename);
-
-    // подключение SQLite3 и создание новой бд
     sqlite3* db;
-    int rc = sqlite3_open("statistic.sqlite", &db);
+    int rc;
 
-    char* errMsg;
-    string createTableQuery = "CREATE TABLE IF NOT EXISTS weather ("
-                              "city TEXT, "
-                              "temperature REAL, "
-                              "latitude REAL, "
-                              "longitude REAL, "
-                              "height INTEGER);";
+    rc = sqlite3_open("weather_database.sqlite", &db);
 
-    rc = sqlite3_exec(db, createTableQuery.c_str(), nullptr, nullptr, &errMsg);
-    string insertQuery = "INSERT OR REPLACE INTO weather (city, temperature, latitude, longitude, height) VALUES (?, ?, ?, ?, ?);";
+    vector<string> tableNames;
+    vector<string> lastDates;
+
     sqlite3_stmt* stmt;
-    rc = sqlite3_prepare_v2(db, insertQuery.c_str(), -1, &stmt, nullptr);
+    rc = sqlite3_prepare_v2(db, "SELECT name FROM sqlite_master WHERE type='table'", -1, &stmt, nullptr);
 
-    for (size_t i = 0; i < link.size(); ++i)
-    {
-        // заполнение таблицы
-        sqlite3_bind_text(stmt, 1, city[i].c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_double(stmt, 2, temperature[i]);
-        sqlite3_bind_double(stmt, 3, latitude[i]);
-        sqlite3_bind_double(stmt, 4, longitude[i]);
-        sqlite3_bind_int(stmt, 5, height[i]);
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        const unsigned char* tableName = sqlite3_column_text(stmt, 0);
+        if (!tableName) {
+            continue;
+        }
+        tableNames.push_back(reinterpret_cast<const char*>(tableName));
+        string query = "SELECT date FROM ";
+        query += reinterpret_cast<const char*>(tableName);
+        query += " ORDER BY rowid DESC LIMIT 1;";
 
-        rc = sqlite3_step(stmt);
-        rc = sqlite3_reset(stmt);
+        sqlite3_stmt* stmt2;
+        rc = sqlite3_prepare_v2(db, query.c_str(), -1, &stmt2, nullptr);
+        if (sqlite3_step(stmt2) == SQLITE_ROW) {
+            const char* dateValue = reinterpret_cast<const char*>(sqlite3_column_text(stmt2, 0));
+            if (dateValue) {
+                lastDates.push_back(dateValue);
+            }
+        }
+
+        sqlite3_finalize(stmt2);
     }
 
     sqlite3_finalize(stmt);
-    sqlite3_close(db);
 
-    // очистка памяти
-    xmlXPathFreeObject(xpathObj);
-    xmlXPathFreeContext(xpathCtx);
-    xmlFreeDoc(doc);
-    xmlCleanupParser();
+    vector<string> allLinks;
+
+    sqlite3_stmt* stmt3;
+
+    for (int w = 0; w < link.size(); w++)
+    {
+        string insert = "INSERT INTO "+ tableNames[w] +" (date, temperature) VALUES(? , ? )";
+        rc = sqlite3_prepare_v2(db, insert.c_str(), -1, &stmt3, nullptr);
+
+        int tableDay = stoi(lastDates[w].substr(0, 2));
+        string tableMonth = lastDates[w].substr(3, 2);
+        string nowMonth = time().substr(3, 2);
+        string tableYear = lastDates[w].substr(6, 4);
+        string nowYear = time().substr(6, 4);
+        //cout << tableMonth << endl << nowMonth << endl;
+        for (int p = stoi(tableYear); p <= stoi(nowYear); p++)
+        {
+            for (int q = stoi(tableMonth); q <= stoi(nowMonth); q++)
+            {
+                string mo = to_string(q);
+                string ye = to_string(p);
+                string l2 = link[w] + "&month=" + mo + "&year=" + ye;
+
+                int k = 1;
+
+                string html = GetWebsiteData(l2);
+                const char* charLink = html.c_str();
+                htmlDocPtr doc = htmlReadMemory(charLink, strlen(charLink), nullptr, nullptr, HTML_PARSE_NOWARNING | HTML_PARSE_NOERROR);
+                xmlXPathContextPtr context = xmlXPathNewContext(doc);
+                const char* xpathExpr = "//td[contains(@class, 'green-color')][1]";
+                xmlXPathObjectPtr result = xmlXPathEvalExpression(reinterpret_cast<const xmlChar*>(xpathExpr), context);
+                xmlNodeSetPtr nodes = result->nodesetval;
+
+                int day = 1;
+
+                for (int i = 0; i < nodes->nodeNr; ++i) {
+                    xmlChar* value = xmlNodeListGetString(doc, nodes->nodeTab[i]->xmlChildrenNode, 1);
+                    if (value == nullptr)
+                    {
+                        if (((q == stoi(tableMonth)) && (p == stoi(tableYear)) && (day > tableDay)) || ((q < stoi(tableMonth)) || (p < stoi(tableYear))))
+                        {
+                            string zero = "";
+                            string zero2 = "";
+                            if (day < 10) zero += "0";
+                            if (q < 10) zero2 += "0";
+
+                            string first = zero + to_string(day) + "." + zero2 + mo + "." + ye;
+                            const char* cFirst = first.c_str();
+
+                            cout << cFirst << endl << -999.0 << endl;
+
+                            sqlite3_bind_text(stmt3, 1, cFirst, -1, SQLITE_STATIC);
+                            sqlite3_bind_double(stmt3, 2, -999.0);
+                            rc = sqlite3_step(stmt3);
+                            sqlite3_reset(stmt3);
+                        }
+                        ++day;
+                    }
+                    else if (k != 1)
+                    {
+                        if (((q == stoi(tableMonth)) && (p == stoi(tableYear)) && (day > tableDay)) || ((q < stoi(tableMonth)) || (p < stoi(tableYear))))
+                        {
+                            string zero = "";
+                            string zero2 = "";
+                            if (day < 10) zero += "0";
+                            if (q < 10) zero2 += "0";
+
+                            string first = zero + to_string(day) + "." + zero2 + mo + "." + ye;
+                            const char* cFirst = first.c_str();
+
+                            string sTemp = string(reinterpret_cast<const char*>(value));
+                            double temp = stod(sTemp);
+
+                            cout << cFirst << endl << temp << endl;
+
+                            sqlite3_bind_text(stmt3, 1, cFirst, -1, SQLITE_STATIC);
+                            sqlite3_bind_double(stmt3, 2, temp);
+                            rc = sqlite3_step(stmt3);
+                            sqlite3_reset(stmt3);
+                        }
+                        ++day;
+                    }
+                    ++k;
+
+                }
+
+                xmlXPathFreeObject(result);
+                xmlXPathFreeContext(context);
+                xmlFreeDoc(doc);
+                xmlCleanupParser();
+
+            }
+        }
+        sqlite3_finalize(stmt3);
+    }
+    sqlite3_close(db);
 
 }

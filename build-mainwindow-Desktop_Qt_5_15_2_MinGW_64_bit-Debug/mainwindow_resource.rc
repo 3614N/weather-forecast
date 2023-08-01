@@ -1,6 +1,6 @@
 #include <windows.h>
 
-IDI_ICON1	ICON	DISCARDABLE	"D:\\github\\weather-forecast\\weather_forecast\\mainwindow.ico"
+IDI_ICON1	ICON	DISCARDABLE	"C:\\projects\\github\\weather-forecast\\weather_forecast\\mainwindow.ico"
 
 VS_VERSION_INFO VERSIONINFO
 	FILEVERSION 0,0,0,0

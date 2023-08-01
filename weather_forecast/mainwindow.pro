@@ -13,6 +13,7 @@ SOURCES += \
 
 HEADERS += \
     calculator.h \
+    connectDatabase.h \
     curl/curl.h \
     curl/curlver.h \
     curl/easy.h \
