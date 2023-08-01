@@ -60,11 +60,11 @@ void connectDb() {
         rc = sqlite3_prepare_v2(weatherDb, sql.c_str(), -1, &stmt, nullptr);
 
         string maxDate;
-        int maxTemperature = numeric_limits<int>::min();
+        double maxTemperature = numeric_limits<double>::min();
 
         while (sqlite3_step(stmt) == SQLITE_ROW) {
             string date = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-            int temperature = sqlite3_column_int(stmt, 1);
+            double temperature = sqlite3_column_double(stmt, 1);
 
             if (maxDate.empty() || isDateGreater(date, maxDate)) {
                 maxDate = date;

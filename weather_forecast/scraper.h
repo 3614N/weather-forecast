@@ -154,7 +154,7 @@ void mainScraper()
                     }
                     else if (k != 1)
                     {
-                        if (((q == stoi(tableMonth)) && (p == stoi(tableYear)) && (day > tableDay)) || ((q < stoi(tableMonth)) || (p < stoi(tableYear))))
+                        if (((q == stoi(tableMonth)) && (p == stoi(tableYear)) && (day > tableDay)) || (q != stoi(tableMonth) || p != stoi(tableYear)))
                         {
                             string zero = "";
                             string zero2 = "";
