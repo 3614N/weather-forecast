@@ -4,25 +4,32 @@
 
 using namespace std;
 
-vector<int> parseDate(const string& dateStr) {
+vector<int> parseDate(const string& dateStr)
+{
     vector<int> dateParts;
     stringstream ss(dateStr);
     string token;
-    while (getline(ss, token, '.')) {
+    while (getline(ss, token, '.'))
+    {
         dateParts.push_back(stoi(token));
     }
     return dateParts;
 }
 
-bool isDateGreater(const string& date1, const string& date2) {
+// обработка для получения самой поздней даты
+bool isDateGreater(const string& date1, const string& date2)
+{
     vector<int> dateParts1 = parseDate(date1);
     vector<int> dateParts2 = parseDate(date2);
 
-    for (size_t i = 2; i >= 0; --i) {
-        if (dateParts1[i] > dateParts2[i]) {
+    for (size_t i = 2; i >= 0; --i)
+    {
+        if (dateParts1[i] > dateParts2[i])
+        {
             return true;
         }
-        else if (dateParts1[i] < dateParts2[i]) {
+        else if (dateParts1[i] < dateParts2[i])
+        {
             return false;
         }
     }
@@ -30,6 +37,8 @@ bool isDateGreater(const string& date1, const string& date2) {
 }
 
 void connectDb() {
+
+    // получение названий таблиц городов
     sqlite3* db;
     int rc = sqlite3_open("weather_database.sqlite", &db);
 
@@ -46,7 +55,7 @@ void connectDb() {
     sqlite3_finalize(stmt);
     sqlite3_close(db);
 
-
+    // вставка актуальных данных в другую базу данных
     sqlite3* cityDb;
     rc = sqlite3_open("city_database.sqlite", &cityDb);
 

@@ -1,5 +1,7 @@
 #include "libs.h"
 
+
+// функция обработки пустых и ошибочных значений
 void check() {
     const char* dbFile = "weather_database.sqlite";
     const double conditionValue = -999.0;

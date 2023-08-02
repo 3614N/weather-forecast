@@ -4,6 +4,7 @@
 
 using namespace std;
 
+// получение текущей даты
 string time()
 {
     const time_t tm = time(nullptr);
@@ -14,12 +15,14 @@ string time()
 
 }
 
+
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, string* output) {
     size_t totalSize = size * nmemb;
     output->append(static_cast<char*>(contents), totalSize);
     return totalSize;
 }
 
+// получение верстки
 string GetWebsiteData(const string& url)
 {
     CURL* curl = curl_easy_init();
@@ -39,6 +42,7 @@ string GetWebsiteData(const string& url)
 
 void mainScraper()
 {
+    // массивы характеристик
     vector<string> link;
     vector<string> city;
     vector<double> temperature;
@@ -48,6 +52,7 @@ void mainScraper()
     vector<string> tables;
     string s;
 
+    // файл с ссылками
     ifstream file("links.txt");
 
     CURL* curl = curl_easy_init();
@@ -67,6 +72,7 @@ void mainScraper()
     vector<string> tableNames;
     vector<string> lastDates;
 
+    // получение названий таблиц
     sqlite3_stmt* stmt;
     rc = sqlite3_prepare_v2(db, "SELECT name FROM sqlite_master WHERE type='table'", -1, &stmt, nullptr);
 
@@ -94,21 +100,25 @@ void mainScraper()
 
     sqlite3_finalize(stmt);
 
-    vector<string> allLinks;
+    vector<string> allLinks; // массив со всеми ссылками в т.ч. побочными
 
     sqlite3_stmt* stmt3;
 
+    // парсинг, обновление данных
     for (int w = 0; w < link.size(); w++)
     {
         string insert = "INSERT INTO "+ tableNames[w] +" (date, temperature) VALUES(? , ? )";
         rc = sqlite3_prepare_v2(db, insert.c_str(), -1, &stmt3, nullptr);
 
+        // строки с датами (текущие и последние в таблице)
         int tableDay = stoi(lastDates[w].substr(0, 2));
         string tableMonth = lastDates[w].substr(3, 2);
         string nowMonth = time().substr(3, 2);
         string tableYear = lastDates[w].substr(6, 4);
         string nowYear = time().substr(6, 4);
         //cout << tableMonth << endl << nowMonth << endl;
+
+        // оптимальный перебор нужных ссылок
         for (int p = stoi(tableYear); p <= stoi(nowYear); p++)
         {
             for (int q = stoi(tableMonth); q <= stoi(nowMonth); q++)
@@ -119,6 +129,7 @@ void mainScraper()
 
                 int k = 1;
 
+                // получение верстки сайта и данных с таблицы о средней температуре
                 string html = GetWebsiteData(l2);
                 const char* charLink = html.c_str();
                 htmlDocPtr doc = htmlReadMemory(charLink, strlen(charLink), nullptr, nullptr, HTML_PARSE_NOWARNING | HTML_PARSE_NOERROR);
@@ -129,10 +140,12 @@ void mainScraper()
 
                 int day = 1;
 
+                // запись значений в базу данных
                 for (int i = 0; i < nodes->nodeNr; ++i) {
                     xmlChar* value = xmlNodeListGetString(doc, nodes->nodeTab[i]->xmlChildrenNode, 1);
                     if (value == nullptr)
                     {
+                        // проверка на актуальность с пустым значением средней температуры
                         if (((q == stoi(tableMonth)) && (p == stoi(tableYear)) && (day > tableDay)) || ((q < stoi(tableMonth)) || (p < stoi(tableYear))))
                         {
                             string zero = "";
@@ -154,6 +167,7 @@ void mainScraper()
                     }
                     else if (k != 1)
                     {
+                        // проверка на актуальность с заполненным значением
                         if (((q == stoi(tableMonth)) && (p == stoi(tableYear)) && (day > tableDay)) || (q != stoi(tableMonth) || p != stoi(tableYear)))
                         {
                             string zero = "";
@@ -180,6 +194,7 @@ void mainScraper()
 
                 }
 
+                // освоождение памяти
                 xmlXPathFreeObject(result);
                 xmlXPathFreeContext(context);
                 xmlFreeDoc(doc);
@@ -189,6 +204,7 @@ void mainScraper()
         }
         sqlite3_finalize(stmt3);
     }
+    // закрытие базы данных
     sqlite3_close(db);
 
 }
