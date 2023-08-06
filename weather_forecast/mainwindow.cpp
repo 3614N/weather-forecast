@@ -6,9 +6,6 @@
 #include <QPushButton>
 #include "libs.h"
 #include "calculator.h"
-#include "scraper.h"
-#include "errors.h"
-#include "connectDatabase.h"
 
 using namespace std;
 
@@ -75,9 +72,6 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_pushButton_2_clicked()
 {
 
-    //mainScraper();
-    //check();
-    //connectDb();
     QDialog *dialog = new QDialog(this);
     dialog->setWindowTitle("Status");
     QLabel *label = new QLabel("В разработке...", dialog);

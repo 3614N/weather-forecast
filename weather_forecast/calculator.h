@@ -145,6 +145,18 @@ vector<double> mainProcess(double x, double y, string dateValue, string timeValu
     vector<double> nrHum;
     vector<double> nrPres;
 
+    int hour = stoi(timeValue);
+    if ((hour >= 0 && hour <= 5) || hour == 24) {
+        timeValue = to_string(3);
+    } else if (hour >= 6 && hour <= 12) {
+        timeValue = to_string(9);
+    } else if (hour >= 13 && hour <= 18) {
+        timeValue = to_string(15);
+    } else if (hour >= 19 && hour <= 23) {
+        timeValue = to_string(21);
+    }
+
+
     qDebug() << "1";
 
     int k = 0;

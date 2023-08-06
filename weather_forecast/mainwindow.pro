@@ -15,7 +15,6 @@ SOURCES += \
 HEADERS += \
     averagenum.h \
     calculator.h \
-    connectDatabase.h \
     curl/curl.h \
     curl/curlver.h \
     curl/easy.h \
@@ -28,7 +27,6 @@ HEADERS += \
     curl/typecheck-gcc.h \
     curl/urlapi.h \
     curl/websockets.h \
-    errors.h \
     libs.h \
     libxml/HTMLparser.h \
     libxml/HTMLtree.h \
@@ -77,7 +75,6 @@ HEADERS += \
     libxml/xpathInternals.h \
     libxml/xpointer.h \
     mainwindow.h \
-    scraper.h \
     sqlite3/sqlite3-vcpkg-config.h \
     sqlite3/sqlite3.h
 
