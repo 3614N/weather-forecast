@@ -8,10 +8,12 @@ LIBS += -L.\lib -llibxml2 -llibcurl -lsqlite3
 
 
 SOURCES += \
+    averagenum.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    averagenum.h \
     calculator.h \
     connectDatabase.h \
     curl/curl.h \
@@ -80,6 +82,7 @@ HEADERS += \
     sqlite3/sqlite3.h
 
 FORMS += \
+    averagenum.ui \
     mainwindow.ui
 
 RC_ICONS += mainwindow.ico

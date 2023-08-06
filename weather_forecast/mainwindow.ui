@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>311</width>
-    <height>245</height>
+    <width>524</width>
+    <height>366</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,21 +18,60 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="3" column="1">
+     <widget class="QLineEdit" name="hour">
+      <property name="text">
+       <string>15</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>День</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="label">
+      <property name="styleSheet">
+       <string notr="true">color: black;</string>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Широта&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
     <item row="1" column="0">
      <widget class="QLineEdit" name="latitude">
       <property name="text">
-       <string/>
+       <string>54</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QLineEdit" name="longitude">
+    <item row="3" column="0">
+     <widget class="QLineEdit" name="day">
       <property name="text">
-       <string/>
+       <string>2.07</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="0" colspan="2">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="styleSheet">
+       <string notr="true">color: black;</string>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Долгота&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
      <widget class="QPushButton" name="pushButton">
       <property name="font">
        <font>
@@ -78,27 +117,38 @@ background-color: #3D8C40;
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QLabel" name="label">
-      <property name="styleSheet">
-       <string notr="true">color: black;</string>
-      </property>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="longitude">
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Широта&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>45</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="styleSheet">
-       <string notr="true">color: black;</string>
+    <item row="6" column="0" colspan="2">
+     <widget class="QLabel" name="label_5">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Долгота&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Тестовая база данных за июль. Форматы - d.mm  и hh&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="0" colspan="2">
+    <item row="2" column="1">
+     <widget class="QLabel" name="label_4">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Час</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="2">
      <widget class="QPushButton" name="pushButton_2">
       <property name="font">
        <font>
@@ -144,6 +194,18 @@ background-color: #3D8C40;
       </property>
      </widget>
     </item>
+    <item row="7" column="0" colspan="2">
+     <widget class="QLabel" name="label_6">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Доступные для ввода часы: 03, 09, 15, 21&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -151,7 +213,7 @@ background-color: #3D8C40;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>311</width>
+     <width>524</width>
      <height>26</height>
     </rect>
    </property>

@@ -27,12 +27,17 @@ class Ui_MainWindow
 public:
     QWidget *centralwidget;
     QGridLayout *gridLayout;
-    QLineEdit *latitude;
-    QLineEdit *longitude;
-    QPushButton *pushButton;
+    QLabel *label_3;
     QLabel *label;
+    QLineEdit *latitude;
     QLabel *label_2;
+    QPushButton *pushButton;
+    QLineEdit *longitude;
+    QLabel *label_5;
+    QLabel *label_4;
     QPushButton *pushButton_2;
+    QLineEdit *day;
+    QLineEdit *hour;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -40,28 +45,43 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(311, 245);
+        MainWindow->resize(465, 346);
         MainWindow->setStyleSheet(QString::fromUtf8("background-color: #FFFFFF;"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         gridLayout = new QGridLayout(centralwidget);
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        label_3 = new QLabel(centralwidget);
+        label_3->setObjectName(QString::fromUtf8("label_3"));
+        QFont font;
+        font.setPointSize(11);
+        label_3->setFont(font);
+
+        gridLayout->addWidget(label_3, 2, 0, 1, 1);
+
+        label = new QLabel(centralwidget);
+        label->setObjectName(QString::fromUtf8("label"));
+        label->setStyleSheet(QString::fromUtf8("color: black;"));
+
+        gridLayout->addWidget(label, 0, 1, 1, 1);
+
         latitude = new QLineEdit(centralwidget);
         latitude->setObjectName(QString::fromUtf8("latitude"));
 
         gridLayout->addWidget(latitude, 1, 0, 1, 1);
 
-        longitude = new QLineEdit(centralwidget);
-        longitude->setObjectName(QString::fromUtf8("longitude"));
+        label_2 = new QLabel(centralwidget);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setStyleSheet(QString::fromUtf8("color: black;"));
 
-        gridLayout->addWidget(longitude, 1, 1, 1, 1);
+        gridLayout->addWidget(label_2, 0, 0, 1, 1);
 
         pushButton = new QPushButton(centralwidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        QFont font;
-        font.setUnderline(false);
-        font.setStrikeOut(false);
-        pushButton->setFont(font);
+        QFont font1;
+        font1.setUnderline(false);
+        font1.setStrikeOut(false);
+        pushButton->setFont(font1);
         pushButton->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "background-color: #4CAF50; /* Green */\n"
 "    border: none;\n"
@@ -93,23 +113,28 @@ public:
 "    font-size: 16px;\n"
 "}"));
 
-        gridLayout->addWidget(pushButton, 2, 0, 1, 2);
+        gridLayout->addWidget(pushButton, 4, 0, 1, 2);
 
-        label = new QLabel(centralwidget);
-        label->setObjectName(QString::fromUtf8("label"));
-        label->setStyleSheet(QString::fromUtf8("color: black;"));
+        longitude = new QLineEdit(centralwidget);
+        longitude->setObjectName(QString::fromUtf8("longitude"));
 
-        gridLayout->addWidget(label, 0, 1, 1, 1);
+        gridLayout->addWidget(longitude, 1, 1, 1, 1);
 
-        label_2 = new QLabel(centralwidget);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-        label_2->setStyleSheet(QString::fromUtf8("color: black;"));
+        label_5 = new QLabel(centralwidget);
+        label_5->setObjectName(QString::fromUtf8("label_5"));
+        label_5->setFont(font);
 
-        gridLayout->addWidget(label_2, 0, 0, 1, 1);
+        gridLayout->addWidget(label_5, 6, 0, 1, 2);
+
+        label_4 = new QLabel(centralwidget);
+        label_4->setObjectName(QString::fromUtf8("label_4"));
+        label_4->setFont(font);
+
+        gridLayout->addWidget(label_4, 2, 1, 1, 1);
 
         pushButton_2 = new QPushButton(centralwidget);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setFont(font);
+        pushButton_2->setFont(font1);
         pushButton_2->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "background-color: #4CAF50; /* Green */\n"
 "    border: none;\n"
@@ -141,12 +166,22 @@ public:
 "    font-size: 16px;\n"
 "}"));
 
-        gridLayout->addWidget(pushButton_2, 3, 0, 1, 2);
+        gridLayout->addWidget(pushButton_2, 5, 0, 1, 2);
+
+        day = new QLineEdit(centralwidget);
+        day->setObjectName(QString::fromUtf8("day"));
+
+        gridLayout->addWidget(day, 3, 0, 1, 1);
+
+        hour = new QLineEdit(centralwidget);
+        hour->setObjectName(QString::fromUtf8("hour"));
+
+        gridLayout->addWidget(hour, 3, 1, 1, 1);
 
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 311, 26));
+        menubar->setGeometry(QRect(0, 0, 465, 26));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -160,12 +195,17 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        latitude->setText(QString());
-        longitude->setText(QString());
-        pushButton->setText(QCoreApplication::translate("MainWindow", "\320\237\320\276\321\201\321\207\320\270\321\202\320\260\321\202\321\214", nullptr));
+        label_3->setText(QCoreApplication::translate("MainWindow", "\320\224\320\265\320\275\321\214", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt;\">\320\250\320\270\321\200\320\276\321\202\320\260</span></p></body></html>", nullptr));
+        latitude->setText(QCoreApplication::translate("MainWindow", "54", nullptr));
         label_2->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt;\">\320\224\320\276\320\273\320\263\320\276\321\202\320\260</span></p></body></html>", nullptr));
+        pushButton->setText(QCoreApplication::translate("MainWindow", "\320\237\320\276\321\201\321\207\320\270\321\202\320\260\321\202\321\214", nullptr));
+        longitude->setText(QCoreApplication::translate("MainWindow", "45", nullptr));
+        label_5->setText(QCoreApplication::translate("MainWindow", "\320\242\320\265\321\201\321\202\320\276\320\262\320\260\321\217 \320\261\320\260\320\267\320\260 \320\264\320\260\320\275\320\275\321\213\321\205 \320\267\320\260 \320\270\321\216\320\273\321\214.", nullptr));
+        label_4->setText(QCoreApplication::translate("MainWindow", "\320\247\320\260\321\201", nullptr));
         pushButton_2->setText(QCoreApplication::translate("MainWindow", "\320\236\320\261\320\275\320\276\320\262\320\270\321\202\321\214 \320\264\320\260\320\275\320\275\321\213\320\265", nullptr));
+        day->setText(QCoreApplication::translate("MainWindow", "2.07", nullptr));
+        hour->setText(QCoreApplication::translate("MainWindow", "15", nullptr));
     } // retranslateUi
 
 };

@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "averagenum.h"
+#include "ui_averagenum.h"
 #include <QDialog>
 #include <QPushButton>
 #include "libs.h"
@@ -25,20 +27,23 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-
+    int k = 0;
     double a = ui->latitude->text().toDouble();
     double b = ui->longitude->text().toDouble();
-    int answer = mainProcess(a, b);
+    string c = ui->day->text().toStdString();
+    string d = ui->hour->text().toStdString();
+
+    vector<double> answer = mainProcess(a, b, c, d);
     QString xAnswer;
-    if ((answer != -999.0) && (answer != 999.0))
+    if ((answer[0] != -999.0) && (answer[0] != 999.0))
     {
-        xAnswer = "Погода в данной точке:\n" + QString::number(answer) + " градусов цельсия";
+        k+=1;
     }
-    else if (answer == 999.0)
+    else if (answer[0] == 999.0)
     {
         xAnswer = "Текущий метод обработки:\nИспользовать интерполяцию";
     }
-    else if (answer == -999.0)
+    else if (answer[0] == -999.0)
     {
         xAnswer = "Текущий метод обработки:\nУкрасть у Вадима";
     }
@@ -52,19 +57,30 @@ void MainWindow::on_pushButton_clicked()
     font.setPointSize(16);
     label->setFont(font);
     dialog->setFixedSize(400, 100);
-    dialog->exec();
+    //dialog->exec();
+    if (k == 1)
+    {
+        double tempValue = answer[0];
+        double wetValue = answer[1];
+        double pressureValue = answer[2];
+
+        AverageNum averageNumDialog(this);
+        connect(this, SIGNAL(sendValues(double, double, double)), &averageNumDialog, SLOT(receiveValues(double, double, double)));
+        emit sendValues(tempValue, wetValue, pressureValue);
+        averageNumDialog.exec();
+    }
 }
 
 
 void MainWindow::on_pushButton_2_clicked()
 {
 
-    mainScraper();
-    check();
-    connectDb();
+    //mainScraper();
+    //check();
+    //connectDb();
     QDialog *dialog = new QDialog(this);
     dialog->setWindowTitle("Status");
-    QLabel *label = new QLabel("Обновилось!", dialog);
+    QLabel *label = new QLabel("В разработке...", dialog);
     QFont font = label->font();
     font.setPointSize(16);
     label->setFont(font);

@@ -15,6 +15,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+signals:
+    // Добавьте объявление сигнала sendValues
+    void sendValues(double tempValue, double wetValue, double pressureValue);
+
 private slots:
     void on_pushButton_clicked();
 
