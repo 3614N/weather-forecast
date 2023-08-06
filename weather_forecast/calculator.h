@@ -163,10 +163,10 @@ vector<double> mainProcess(double x, double y, string dateValue, string timeValu
 
     // подключение библиотеки и открытие таблицы в базе данных
     sqlite3* db;
-    int rc = sqlite3_open("info.sqlite", &db);
+    sqlite3_open("info.sqlite", &db);
     sqlite3_stmt* stmt;
     const char* query = "SELECT * FROM info";
-    rc = sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
+    sqlite3_prepare_v2(db, query, -1, &stmt, nullptr);
 
     // импорт значений с таблицы
     while (sqlite3_step(stmt) == SQLITE_ROW)
@@ -183,14 +183,14 @@ vector<double> mainProcess(double x, double y, string dateValue, string timeValu
     qDebug() << "2";
 
     sqlite3* db2;
-    int rc2 = sqlite3_open("climat_database.sqlite", &db2);
+    sqlite3_open("climat_database.sqlite", &db2);
     vector<WeatherData> weatherData;
 
     // Получаем список всех таблиц в базе данных
     string tableQuery = "SELECT name FROM sqlite_master WHERE type='table';";
     sqlite3_stmt* tableStmt;
     int w = 0;
-    rc2 = sqlite3_prepare_v2(db2, tableQuery.c_str(), -1, &tableStmt, nullptr);
+    sqlite3_prepare_v2(db2, tableQuery.c_str(), -1, &tableStmt, nullptr);
     // Для каждой таблицы выполняем запрос и сохраняем результаты в вектор
     while (sqlite3_step(tableStmt) == SQLITE_ROW) {
         const char* tableName = reinterpret_cast<const char*>(sqlite3_column_text(tableStmt, 0));
