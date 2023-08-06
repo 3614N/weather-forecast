@@ -41,11 +41,11 @@ void MainWindow::on_pushButton_clicked()
     }
     else if (answer[0] == 999.0)
     {
-        xAnswer = "Текущий метод обработки:\nИспользовать интерполяцию";
+        xAnswer = "Текущий метод обработки:\nВ разработке...";
     }
     else if (answer[0] == -999.0)
     {
-        xAnswer = "Текущий метод обработки:\nУкрасть у Вадима";
+        xAnswer = "Текущий метод обработки:\nВ разработке...";
     }
 
     QDialog *dialog = new QDialog(this);
@@ -57,7 +57,6 @@ void MainWindow::on_pushButton_clicked()
     font.setPointSize(16);
     label->setFont(font);
     dialog->setFixedSize(400, 100);
-    //dialog->exec();
     if (k == 1)
     {
         double tempValue = answer[0];
@@ -69,6 +68,7 @@ void MainWindow::on_pushButton_clicked()
         emit sendValues(tempValue, wetValue, pressureValue);
         averageNumDialog.exec();
     }
+    else dialog->exec();
 }
 
 
