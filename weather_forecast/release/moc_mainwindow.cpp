@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[8];
-    char stringdata0[102];
+    QByteArrayData data[12];
+    char stringdata0[147];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -38,13 +38,18 @@ QT_MOC_LITERAL(2, 22, 0), // ""
 QT_MOC_LITERAL(3, 23, 9), // "tempValue"
 QT_MOC_LITERAL(4, 33, 8), // "wetValue"
 QT_MOC_LITERAL(5, 42, 13), // "pressureValue"
-QT_MOC_LITERAL(6, 56, 21), // "on_pushButton_clicked"
-QT_MOC_LITERAL(7, 78, 23) // "on_pushButton_2_clicked"
+QT_MOC_LITERAL(6, 56, 11), // "std::string"
+QT_MOC_LITERAL(7, 68, 13), // "windDirection"
+QT_MOC_LITERAL(8, 82, 9), // "windSpeed"
+QT_MOC_LITERAL(9, 92, 8), // "dewPoint"
+QT_MOC_LITERAL(10, 101, 21), // "on_pushButton_clicked"
+QT_MOC_LITERAL(11, 123, 23) // "on_pushButton_2_clicked"
 
     },
     "MainWindow\0sendValues\0\0tempValue\0"
-    "wetValue\0pressureValue\0on_pushButton_clicked\0"
-    "on_pushButton_2_clicked"
+    "wetValue\0pressureValue\0std::string\0"
+    "windDirection\0windSpeed\0dewPoint\0"
+    "on_pushButton_clicked\0on_pushButton_2_clicked"
 };
 #undef QT_MOC_LITERAL
 
@@ -62,14 +67,14 @@ static const uint qt_meta_data_MainWindow[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    3,   29,    2, 0x06 /* Public */,
+       1,    6,   29,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       6,    0,   36,    2, 0x08 /* Private */,
-       7,    0,   37,    2, 0x08 /* Private */,
+      10,    0,   42,    2, 0x08 /* Private */,
+      11,    0,   43,    2, 0x08 /* Private */,
 
  // signals: parameters
-    QMetaType::Void, QMetaType::Double, QMetaType::Double, QMetaType::Double,    3,    4,    5,
+    QMetaType::Void, QMetaType::Double, QMetaType::Double, QMetaType::Double, 0x80000000 | 6, QMetaType::Double, QMetaType::Double,    3,    4,    5,    7,    8,    9,
 
  // slots: parameters
     QMetaType::Void,
@@ -84,7 +89,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         auto *_t = static_cast<MainWindow *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->sendValues((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< double(*)>(_a[3]))); break;
+        case 0: _t->sendValues((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< double(*)>(_a[3])),(*reinterpret_cast< std::string(*)>(_a[4])),(*reinterpret_cast< double(*)>(_a[5])),(*reinterpret_cast< double(*)>(_a[6]))); break;
         case 1: _t->on_pushButton_clicked(); break;
         case 2: _t->on_pushButton_2_clicked(); break;
         default: ;
@@ -92,7 +97,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
-            using _t = void (MainWindow::*)(double , double , double );
+            using _t = void (MainWindow::*)(double , double , double , std::string , double , double );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&MainWindow::sendValues)) {
                 *result = 0;
                 return;
@@ -142,9 +147,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void MainWindow::sendValues(double _t1, double _t2, double _t3)
+void MainWindow::sendValues(double _t1, double _t2, double _t3, std::string _t4, double _t5, double _t6)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t3))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t3))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t4))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t5))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t6))) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 QT_WARNING_POP

@@ -16,7 +16,7 @@ public:
     ~AverageNum();
 
 public slots:
-    void receiveValues(double tempValue, double wetValue, double pressureValue);
+    void receiveValues(double tempValue, double wetValue, double pressureValue, std::string windDirection, double windSpeed, double dewPoint);
 
 private:
     Ui::AverageNum *ui;

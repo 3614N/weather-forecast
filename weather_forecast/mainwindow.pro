@@ -27,6 +27,7 @@ HEADERS += \
     curl/typecheck-gcc.h \
     curl/urlapi.h \
     curl/websockets.h \
+    detector.h \
     libs.h \
     libxml/HTMLparser.h \
     libxml/HTMLtree.h \

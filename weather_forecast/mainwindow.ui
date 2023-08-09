@@ -99,7 +99,7 @@ background-color: #3D8C40;
 }</string>
       </property>
       <property name="text">
-       <string>Обновить данные</string>
+       <string>Обработать аномальные показатели</string>
       </property>
      </widget>
     </item>

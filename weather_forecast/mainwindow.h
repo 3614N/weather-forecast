@@ -17,7 +17,7 @@ public:
 
 signals:
     // Добавьте объявление сигнала sendValues
-    void sendValues(double tempValue, double wetValue, double pressureValue);
+    void sendValues(double tempValue, double wetValue, double pressureValue, std::string windDirection, double windSpeed, double dewPoint);
 
 private slots:
     void on_pushButton_clicked();

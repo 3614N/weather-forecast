@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_AverageNum_t {
-    QByteArrayData data[6];
-    char stringdata0[59];
+    QByteArrayData data[10];
+    char stringdata0[104];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -37,11 +37,16 @@ QT_MOC_LITERAL(1, 11, 13), // "receiveValues"
 QT_MOC_LITERAL(2, 25, 0), // ""
 QT_MOC_LITERAL(3, 26, 9), // "tempValue"
 QT_MOC_LITERAL(4, 36, 8), // "wetValue"
-QT_MOC_LITERAL(5, 45, 13) // "pressureValue"
+QT_MOC_LITERAL(5, 45, 13), // "pressureValue"
+QT_MOC_LITERAL(6, 59, 11), // "std::string"
+QT_MOC_LITERAL(7, 71, 13), // "windDirection"
+QT_MOC_LITERAL(8, 85, 9), // "windSpeed"
+QT_MOC_LITERAL(9, 95, 8) // "dewPoint"
 
     },
     "AverageNum\0receiveValues\0\0tempValue\0"
-    "wetValue\0pressureValue"
+    "wetValue\0pressureValue\0std::string\0"
+    "windDirection\0windSpeed\0dewPoint"
 };
 #undef QT_MOC_LITERAL
 
@@ -59,10 +64,10 @@ static const uint qt_meta_data_AverageNum[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    3,   19,    2, 0x0a /* Public */,
+       1,    6,   19,    2, 0x0a /* Public */,
 
  // slots: parameters
-    QMetaType::Void, QMetaType::Double, QMetaType::Double, QMetaType::Double,    3,    4,    5,
+    QMetaType::Void, QMetaType::Double, QMetaType::Double, QMetaType::Double, 0x80000000 | 6, QMetaType::Double, QMetaType::Double,    3,    4,    5,    7,    8,    9,
 
        0        // eod
 };
@@ -73,7 +78,7 @@ void AverageNum::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         auto *_t = static_cast<AverageNum *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->receiveValues((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< double(*)>(_a[3]))); break;
+        case 0: _t->receiveValues((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2])),(*reinterpret_cast< double(*)>(_a[3])),(*reinterpret_cast< std::string(*)>(_a[4])),(*reinterpret_cast< double(*)>(_a[5])),(*reinterpret_cast< double(*)>(_a[6]))); break;
         default: ;
         }
     }

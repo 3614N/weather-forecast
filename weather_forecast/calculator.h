@@ -95,17 +95,16 @@ int executeAndSaveQuery(sqlite3* db, const std::string& query, const std::string
 
     // Извлекаем данные из запроса и сохраняем их в вектор
     while (sqlite3_step(stmt) == SQLITE_ROW) {
-        qDebug() << "999";
         WeatherData data;
         data.city = city;
         data.time = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
         data.date = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-        data.windDirection = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
-        data.windAverageSpeed = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-        data.vision = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
-        data.temperature = stod(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5)));
-        data.humidity = stod(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6)));
-        data.pressure = stod(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7)));
+        data.windDirection = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+        data.windAverageSpeed = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+        data.vision = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
+        data.temperature = stod(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6)));
+        data.humidity = stod(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7)));
+        data.pressure = stod(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 8)));
         weatherData.push_back(data);
         counters.push_back(w);
     }
@@ -114,8 +113,60 @@ int executeAndSaveQuery(sqlite3* db, const std::string& query, const std::string
     return 0;
 }
 
+string mostCommonString(const vector<string>& arr) {
+    unordered_map<string, int> freq_map;
+
+    for (const string& str : arr) {
+        freq_map[str]++;
+    }
+
+    string most_common;
+    int max_frequency = 0;
+
+    for (const auto& pair : freq_map) {
+        if (pair.second > max_frequency) {
+            max_frequency = pair.second;
+            most_common = pair.first;
+        }
+    }
+
+    return most_common;
+}
+
+double calculateWindAverageSpeed(vector<string> allWAS){
+    vector<double> dWAS;
+    for (string WAS : allWAS)
+    {
+        if (WAS.find("-") == string::npos)
+        {
+            dWAS.push_back(stod(WAS));
+        }
+        if (WAS.find("-") != string::npos)
+        {
+            double firstValue = stod(WAS.substr(0, WAS.find("-")));
+            double secondValue = stod(WAS.substr(WAS.find("-") + 1, WAS.length()));
+            dWAS.push_back(firstValue/secondValue);
+        }
+        double sum = accumulate(dWAS.begin(), dWAS.end(), 0);
+        double average = static_cast<double>(sum) / dWAS.size();
+        return average;
+    }
+}
+
+double dewPoint(double temperature, double humidity) {
+    // Константы для расчета точки росы
+    double a = 17.27;
+    double b = 237.7;
+
+    // Формула для расчета точки росы
+    double alpha = ((a * temperature) / (b + temperature)) + log(humidity/100.0);
+    double dewPointTemperature = (b * alpha) / (a - alpha);
+
+    return dewPointTemperature;
+}
+
 // калькулятор
-vector<double> mainProcess(double x, double y, string dateValue, string timeValue)
+vector<string> mainProcess(double x, double y, string dateValue, string timeValue)
 { 
     // вектора характеристик метеовышек
     vector<string> city;
@@ -145,19 +196,26 @@ vector<double> mainProcess(double x, double y, string dateValue, string timeValu
     vector<double> nrHum;
     vector<double> nrPres;
 
+
     int hour = stoi(timeValue);
-    if ((hour >= 0 && hour <= 5) || hour == 24) {
-        timeValue = to_string(3);
-    } else if (hour >= 6 && hour <= 12) {
-        timeValue = to_string(9);
-    } else if (hour >= 13 && hour <= 18) {
-        timeValue = to_string(15);
-    } else if (hour >= 19 && hour <= 23) {
-        timeValue = to_string(21);
+    if (hour >= 2 && hour <= 4){
+        timeValue = "03";
+    } else if (hour >= 5 && hour <= 7){
+        timeValue = "06";
+    } else if (hour >= 8  && hour <= 10) {
+        timeValue = "09";
+    } else if (hour >= 11  && hour <= 13) {
+        timeValue = "12";
+    }else if (hour >= 14 && hour <= 16) {
+        timeValue = "15";
+    }else if (hour >= 17  && hour <= 19) {
+        timeValue = "18";
+    } else if (hour >= 20) {
+        timeValue = "21";
+    }else if (hour <= 1) {
+        timeValue = "00";
     }
 
-
-    qDebug() << "1";
 
     int k = 0;
 
@@ -180,7 +238,6 @@ vector<double> mainProcess(double x, double y, string dateValue, string timeValu
     sqlite3_finalize(stmt);
     sqlite3_close(db);
 
-    qDebug() << "2";
 
     sqlite3* db2;
     sqlite3_open("climat_database.sqlite", &db2);
@@ -207,22 +264,31 @@ vector<double> mainProcess(double x, double y, string dateValue, string timeValu
     sqlite3_finalize(tableStmt);
     sqlite3_close(db2);
 
-    qDebug() << "3";
-
-    //qDebug() << QString::number(city.size());
-
+    int c = 0;
     int e = 0;
-
     // вычисление ближайших метеостанций  радиусе 200км
     for (const WeatherData& data : weatherData) {
-        qDebug() << QString::fromStdString(data.windAverageSpeed);
         double distance = calculateDistance(x, y, latitude[counters[e]], longitude[counters[e]]);
-        qDebug() << QString::number(distance);
-        if (distance < 200)
+        if (distance <= 20)
         {
+            nlLat.push_back(latitude[counters[e]]);
+            nlLot.push_back(longitude[counters[e]]);
+            nlAlt.push_back(altitude[counters[e]]);
+            nlDist.push_back(distance);
+            nlWD.push_back(data.windDirection);
+            nlWAS.push_back(data.windAverageSpeed);
+            nlVis.push_back(data.vision);
+            nlTemp.push_back(data.temperature);
+            nlHum.push_back(data.humidity);
+            nlPres.push_back(data.pressure);
+            c++;
+            break;
+
+        }
+        if (distance < 150)
+        {
+
             k++;
-            qDebug() << QString::number(latitude[counters[e]]);
-            qDebug() << "4";
             if (y >= longitude[counters[e]])
             {
                 nlLat.push_back(latitude[counters[e]]);
@@ -253,26 +319,45 @@ vector<double> mainProcess(double x, double y, string dateValue, string timeValu
         e++;
     }
     qDebug() << QString::number(k);
-    qDebug() << QString::number(nlLat.size());
-    qDebug() << QString::number(nrLat.size());
+
     // определение используемой процедуры
-    if ((k >= 10) && (nlLat.size() >= 3) && (nrLat.size() >= 3))
+    if (c == 1)
     {
-        qDebug() << "tut";
-        qDebug() << QString::number((!calculateTStatistic(nlTemp, nrTemp) && !calculateTStatistic(nlHum, nrHum) && !calculateTStatistic(nlPres, nrPres)));
+
+
+        double dew = dewPoint(nlTemp[0], nlHum[0]);
+
+        vector<string> Avgs = {to_string(nlTemp[0]), to_string(nlHum[0]), to_string(nlPres[0]), nlWD[0], nlWAS[0], to_string(dew)};
+
+        return Avgs;
+
+    }
+    else if ((k >= 10) && (nlLat.size() >= 3) && (nrLat.size() >= 3))
+    {
         if (!calculateTStatistic(nlTemp, nrTemp) && !calculateTStatistic(nlHum, nrHum) && !calculateTStatistic(nlPres, nrPres))
         {
             double sum1 = accumulate(nlTemp.begin(), nlTemp.end(), 0) + accumulate(nrTemp.begin(), nrTemp.end(), 0);
             double sum2 = accumulate(nlHum.begin(), nlHum.end(), 0) + accumulate(nrHum.begin(), nrHum.end(), 0);
             double sum3 = accumulate(nlPres.begin(), nlPres.end(), 0) + accumulate(nrPres.begin(), nrPres.end(), 0);
-            vector<double> Avgs = {sum1/(nlTemp.size()+nrTemp.size()), sum2/(nlHum.size()+nrHum.size()), sum3/(nlPres.size()+nrPres.size()) };
+            vector<string> allWD = nlWD;
+            for (string dir : nrWD) allWD.push_back(dir);
+            string avgWD = mostCommonString(allWD);
+            vector<string>allWAS = nlWAS;
+            double avgWAS = calculateWindAverageSpeed(allWAS);
+
+            double dew = dewPoint(sum1/(nlTemp.size()+nrTemp.size()), sum2/(nlHum.size()+nrHum.size()));
+
+            for (string speed: nrWAS) allWAS.push_back(speed);
+
+            vector<string> Avgs = {to_string(sum1/(nlTemp.size()+nrTemp.size())), to_string(sum2/(nlHum.size()+nrHum.size())), to_string(sum3/(nlPres.size()+nrPres.size())), avgWD, to_string(avgWAS), to_string(dew)};
 
             return Avgs;
         }
+
         else
         {
-            return {999.0};
+            return {to_string(999.0)};
         }
     }
-    else return {-999.0}; // :)
+    else return {to_string(-999.0)}; // :)
 }

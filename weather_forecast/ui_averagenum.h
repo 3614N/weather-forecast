@@ -39,13 +39,13 @@ public:
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout_4;
     QLabel *label_8;
-    QLabel *WindWay;
+    QLabel *windDir;
     QHBoxLayout *horizontalLayout_5;
     QLabel *label_9;
     QLabel *WindSpeed;
     QHBoxLayout *horizontalLayout_6;
     QLabel *label_10;
-    QLabel *VisionValue;
+    QLabel *DewPoint;
 
     void setupUi(QWidget *AverageNum)
     {
@@ -124,10 +124,10 @@ public:
 
         horizontalLayout_4->addWidget(label_8);
 
-        WindWay = new QLabel(AverageNum);
-        WindWay->setObjectName(QString::fromUtf8("WindWay"));
+        windDir = new QLabel(AverageNum);
+        windDir->setObjectName(QString::fromUtf8("windDir"));
 
-        horizontalLayout_4->addWidget(WindWay);
+        horizontalLayout_4->addWidget(windDir);
 
 
         verticalLayout_2->addLayout(horizontalLayout_4);
@@ -154,10 +154,10 @@ public:
 
         horizontalLayout_6->addWidget(label_10);
 
-        VisionValue = new QLabel(AverageNum);
-        VisionValue->setObjectName(QString::fromUtf8("VisionValue"));
+        DewPoint = new QLabel(AverageNum);
+        DewPoint->setObjectName(QString::fromUtf8("DewPoint"));
 
-        horizontalLayout_6->addWidget(VisionValue);
+        horizontalLayout_6->addWidget(DewPoint);
 
 
         verticalLayout_2->addLayout(horizontalLayout_6);
@@ -188,11 +188,11 @@ public:
         label_4->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\224\320\260\320\262\320\273\320\265\320\275\320\270\320\265</span></p></body></html>", nullptr));
         PressureValue->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">0</span></p></body></html>", nullptr));
         label_8->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\235\320\260\320\277\321\200\320\260\320\262\320\273. \320\262\320\265\321\202\321\200\320\260:</span></p></body></html>", nullptr));
-        WindWay->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\275/\320\276</span></p></body></html>", nullptr));
+        windDir->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\275/\320\276</span></p></body></html>", nullptr));
         label_9->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\241\320\272\320\276\321\200\320\276\321\201\321\202\321\214 \320\262\320\265\321\202\321\200\320\260:</span></p></body></html>", nullptr));
         WindSpeed->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\275/\320\276</span></p></body></html>", nullptr));
-        label_10->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\222\320\270\320\264\320\270\320\274\320\276\321\201\321\202\321\214:</span></p></body></html>", nullptr));
-        VisionValue->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\275/\320\276</span></p></body></html>", nullptr));
+        label_10->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\242\320\276\321\207\320\272\320\260 \321\200\320\276\321\201\321\213:</span></p></body></html>", nullptr));
+        DewPoint->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\275/\320\276</span></p></body></html>", nullptr));
     } // retranslateUi
 
 };
