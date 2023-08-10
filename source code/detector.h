@@ -78,7 +78,7 @@ vector<string> removeOutliers(vector<double> arr, int n, int index, vector<strin
 int tempCallBack(void* data, int argc, char** argv, char** azColName) {
     vector<double>* values = static_cast<vector<double>*>(data);
     try {
-        double value = stod(argv[5]);
+        double value = stod(argv[6]);
         values->push_back(value); // Добавляем значение в вектор
 
     }
@@ -91,7 +91,7 @@ int tempCallBack(void* data, int argc, char** argv, char** azColName) {
 int windCallBack(void* data, int argc, char** argv, char** azColName) {
     vector<double>* values = static_cast<vector<double>*>(data);
     try {
-        double value = separatedAverage(argv[3]);
+        double value = separatedAverage(argv[4]);
         values->push_back(value); // Добавляем значение в вектор
 
     }
@@ -104,7 +104,7 @@ int windCallBack(void* data, int argc, char** argv, char** azColName) {
 int pressureCallBack(void* data, int argc, char** argv, char** azColName) {
     vector<double>* values = static_cast<vector<double>*>(data);
     try {
-        double value = stod(argv[7]);
+        double value = stod(argv[8]);
         values->push_back(value); // Добавляем значение в вектор
     }
     catch (...) {
@@ -116,7 +116,7 @@ int pressureCallBack(void* data, int argc, char** argv, char** azColName) {
 int humidityCallBack(void* data, int argc, char** argv, char** azColName) {
     vector<double>* values = static_cast<vector<double>*>(data);
     try {
-        double value = stod(argv[6]);
+        double value = stod(argv[7]);
         values->push_back(value); // Добавляем значение в вектор
     }
     catch (...) {
@@ -157,7 +157,7 @@ void udalyator(string time) {
 
     sqlite3_exec(db, TableSqlQuery.c_str(), TableCallBack, &cities, nullptr);
 
-    for (int j = 0; j < cities.size(); j++) {
+    for (size_t j = 0; j < cities.size(); j++) {
         cout << cities[j] << endl;
 
         string query = "DELETE FROM " + cities[j] + " WHERE "
@@ -177,7 +177,7 @@ void udalyator(string time) {
         sqlite3_exec(db, SqlQuery.c_str(), humidityCallBack, &humidity, nullptr);
         sqlite3_exec(db, SqlQuery.c_str(), dateCallBack, &date, nullptr);
 
-        for (int i = 0; i < begData.size(); i++) {
+        for (size_t i = 0; i < begData.size(); i++) {
             query = "DELETE FROM " + cities[j] + " WHERE date = " + begData[i] + ";";
             sqlite3_exec(db, query.c_str(), NULL, 0, nullptr);
         }
@@ -197,7 +197,7 @@ void udalyator(string time) {
             updatable_season_humidity.push_back(humidity[i]);
         }
 
-        for (int i = 0; i < season_humidity.size(); i++) {
+        for (size_t i = 0; i < season_humidity.size(); i++) {
             vector<string> indexList = removeOutliers(season_humidity[i], season_humidity[i].size(), i, date);
             for (auto value : indexList) {
                 string DelQuery = "DELETE FROM " + cities[j] + " WHERE date = " + value + ";";
@@ -218,7 +218,7 @@ void udalyator(string time) {
             updatable_season_pressure.push_back(pressure[i]);
         }
 
-        for (int i = 0; i < season_pressure.size(); i++) {
+        for (size_t i = 0; i < season_pressure.size(); i++) {
             vector<string> indexList = removeOutliers(season_pressure[i], season_pressure[i].size(), i, date);
             for (auto value : indexList) {
                 string DelQuery = "DELETE FROM " + cities[j] + " WHERE date = " + value + ";";
@@ -240,7 +240,7 @@ void udalyator(string time) {
             updatable_season_wind.push_back(windSpeed[i]);
         }
 
-        for (int i = 0; i < season_wind.size(); i++) {
+        for (size_t i = 0; i < season_wind.size(); i++) {
             vector<string> indexList = removeOutliers(season_wind[i], season_wind[i].size(), i, date);
             for (auto value : indexList) {
                 string DelQuery = "DELETE FROM " + cities[j] + " WHERE date = " + value + ";";
@@ -262,7 +262,7 @@ void udalyator(string time) {
             updatable_season_temp.push_back(temperature[i]);
         }
 
-        for (int i = 0; i < season_temp.size(); i++) {
+        for (size_t i = 0; i < season_temp.size(); i++) {
             vector<string> indexList = removeOutliers(season_temp[i], season_temp[i].size(), i, date);
             for (auto value : indexList) {
                 string DelQuery = "DELETE FROM " + cities[j] + " WHERE date = " + value + ";";

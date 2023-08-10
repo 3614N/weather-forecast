@@ -64,11 +64,11 @@ double calculateTStatistic(const vector<double>& group1, const vector<double>& g
     double t_statistic = (mean1 - mean2) / sqrt(pow(m1, 2) + pow(m2, 2));
 
     if (abs(t_statistic) >= 0.05) {
-        qDebug() << QString::number(t_statistic);
+       // qDebug() << QString::number(t_statistic);
         return 0;
     }
     else {
-        qDebug() << QString::number(t_statistic);
+       // qDebug() << QString::number(t_statistic);
         return 1;
     }
 }
@@ -147,10 +147,10 @@ double calculateWindAverageSpeed(vector<string> allWAS){
             double secondValue = stod(WAS.substr(WAS.find("-") + 1, WAS.length()));
             dWAS.push_back(firstValue/secondValue);
         }
-        double sum = accumulate(dWAS.begin(), dWAS.end(), 0);
-        double average = static_cast<double>(sum) / dWAS.size();
-        return average;
     }
+    double sum = accumulate(dWAS.begin(), dWAS.end(), 0);
+    double average = static_cast<double>(sum) / dWAS.size();
+    return average;
 }
 
 double dewPoint(double temperature, double humidity) {
@@ -195,26 +195,6 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
     vector<double> nrTemp;
     vector<double> nrHum;
     vector<double> nrPres;
-
-
-    int hour = stoi(timeValue);
-    if (hour >= 2 && hour <= 4){
-        timeValue = "03";
-    } else if (hour >= 5 && hour <= 7){
-        timeValue = "06";
-    } else if (hour >= 8  && hour <= 10) {
-        timeValue = "09";
-    } else if (hour >= 11  && hour <= 13) {
-        timeValue = "12";
-    }else if (hour >= 14 && hour <= 16) {
-        timeValue = "15";
-    }else if (hour >= 17  && hour <= 19) {
-        timeValue = "18";
-    } else if (hour >= 20) {
-        timeValue = "21";
-    }else if (hour <= 1) {
-        timeValue = "00";
-    }
 
 
     int k = 0;
@@ -319,6 +299,9 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
         e++;
     }
     qDebug() << QString::number(k);
+    counters.clear();
+    for (double i : nlTemp) qDebug() << QString::number(i);
+    for (double i : nrTemp) qDebug() << QString::number(i);
 
     // определение используемой процедуры
     if (c == 1)
@@ -329,11 +312,14 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
 
         vector<string> Avgs = {to_string(nlTemp[0]), to_string(nlHum[0]), to_string(nlPres[0]), nlWD[0], nlWAS[0], to_string(dew)};
 
+        c = 0;
         return Avgs;
 
     }
+
     else if ((k >= 10) && (nlLat.size() >= 3) && (nrLat.size() >= 3))
     {
+
         if (!calculateTStatistic(nlTemp, nrTemp) && !calculateTStatistic(nlHum, nrHum) && !calculateTStatistic(nlPres, nrPres))
         {
             double sum1 = accumulate(nlTemp.begin(), nlTemp.end(), 0) + accumulate(nrTemp.begin(), nrTemp.end(), 0);
@@ -343,19 +329,22 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
             for (string dir : nrWD) allWD.push_back(dir);
             string avgWD = mostCommonString(allWD);
             vector<string>allWAS = nlWAS;
+            for (string was : nrWAS) allWAS.push_back(was);
             double avgWAS = calculateWindAverageSpeed(allWAS);
 
             double dew = dewPoint(sum1/(nlTemp.size()+nrTemp.size()), sum2/(nlHum.size()+nrHum.size()));
 
             for (string speed: nrWAS) allWAS.push_back(speed);
 
-            vector<string> Avgs = {to_string(sum1/(nlTemp.size()+nrTemp.size())), to_string(sum2/(nlHum.size()+nrHum.size())), to_string(sum3/(nlPres.size()+nrPres.size())), avgWD, to_string(avgWAS), to_string(dew)};
 
+            vector<string> Avgs = {to_string(sum1/(nlTemp.size()+nrTemp.size())), to_string(sum2/(nlHum.size()+nrHum.size())), to_string(sum3/(nlPres.size()+nrPres.size())), avgWD, to_string(avgWAS), to_string(dew)};
+            qDebug() << QString::number(counters.size());
             return Avgs;
         }
 
         else
         {
+            qDebug() << "АААААААААААААААААААААААААА";
             return {to_string(999.0)};
         }
     }
