@@ -73,7 +73,9 @@ double calculateTStatistic(const vector<double>& group1, const vector<double>& g
     }
 }
 
-struct WeatherData {
+
+struct WeatherData
+{
     string city;
     string time;
     string date;
@@ -85,16 +87,20 @@ struct WeatherData {
     double pressure;
 };
 
+
 vector<int> counters;
 
-// Функция для выполнения SQL-запроса и сохранения результатов в вектор
-int executeAndSaveQuery(sqlite3* db, const std::string& query, const std::string& city, std::vector<WeatherData>& weatherData, int w) {
+
+// функция для выполнения SQL-запроса и сохранения результатов в вектор
+int executeAndSaveQuery(sqlite3* db, const std::string& query, const std::string& city, std::vector<WeatherData>& weatherData, int w)
+{
     sqlite3_stmt* stmt;
 
     sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr);
 
-    // Извлекаем данные из запроса и сохраняем их в вектор
-    while (sqlite3_step(stmt) == SQLITE_ROW) {
+    // извлекаем данные из запроса и сохраняем их в вектор
+    while (sqlite3_step(stmt) == SQLITE_ROW)
+    {
         WeatherData data;
         data.city = city;
         data.time = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
@@ -113,27 +119,30 @@ int executeAndSaveQuery(sqlite3* db, const std::string& query, const std::string
     return 0;
 }
 
-string mostCommonString(const vector<string>& arr) {
+// вычисление направления ветра
+string calculateWindDirection(const vector<string>& arr)
+{
     unordered_map<string, int> freq_map;
-
-    for (const string& str : arr) {
+    for (const string& str : arr)
+    {
         freq_map[str]++;
     }
-
     string most_common;
     int max_frequency = 0;
-
-    for (const auto& pair : freq_map) {
-        if (pair.second > max_frequency) {
+    for (const auto& pair : freq_map)
+    {
+        if (pair.second > max_frequency)
+        {
             max_frequency = pair.second;
             most_common = pair.first;
         }
     }
-
     return most_common;
 }
 
-double calculateWindAverageSpeed(vector<string> allWAS){
+// вычисление средней скорости ветра
+double calculateWindAverageSpeed(vector<string> allWAS)
+{
     vector<double> dWAS;
     for (string WAS : allWAS)
     {
@@ -153,7 +162,9 @@ double calculateWindAverageSpeed(vector<string> allWAS){
     return average;
 }
 
-double dewPoint(double temperature, double humidity) {
+// вычисление точки росы
+double dewPoint(double temperature, double humidity)
+{
     // Константы для расчета точки росы
     double a = 17.27;
     double b = 237.7;
@@ -165,8 +176,8 @@ double dewPoint(double temperature, double humidity) {
     return dewPointTemperature;
 }
 
-// калькулятор
-vector<string> mainProcess(double x, double y, string dateValue, string timeValue)
+// получение итоговых метеоданных
+vector<string> calculateWeather(double x, double y, string dateValue, string timeValue, double radius)
 { 
     // вектора характеристик метеовышек
     vector<string> city;
@@ -174,6 +185,7 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
     vector<double> longitude;
     vector<double> altitude;
 
+    // nl - Near Left (!)
     vector<double> nlLat;
     vector<double> nlLot;
     vector<double> nlAlt;
@@ -185,6 +197,7 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
     vector<double> nlHum;
     vector<double> nlPres;
 
+    // nr - Near Right (!)
     vector<double> nrLat;
     vector<double> nrLot;
     vector<double> nrAlt;
@@ -197,7 +210,6 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
     vector<double> nrPres;
 
 
-    int k = 0;
 
     // подключение библиотеки и открытие таблицы в базе данных
     sqlite3* db;
@@ -244,11 +256,16 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
     sqlite3_finalize(tableStmt);
     sqlite3_close(db2);
 
-    int c = 0;
-    int e = 0;
-    // вычисление ближайших метеостанций  радиусе 200км
-    for (const WeatherData& data : weatherData) {
+    bool isNearest = false; // индикатор вышки в радиусе 20км
+    int e = 0; // счетчик векторов координат
+    int nearCounter = 0; // счетчик ближайшик вышек
+
+    // вычисление ближайших метеостанций в заданном радиусе
+    for (const WeatherData& data : weatherData)
+    {
         double distance = calculateDistance(x, y, latitude[counters[e]], longitude[counters[e]]);
+
+        // случай, когда рассчетом показателей можно пренебречь ( вышка в менее, чем 20км от искомой точки )
         if (distance <= 20)
         {
             nlLat.push_back(latitude[counters[e]]);
@@ -261,14 +278,14 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
             nlTemp.push_back(data.temperature);
             nlHum.push_back(data.humidity);
             nlPres.push_back(data.pressure);
-            c++;
+            isNearest = true;
             break;
-
         }
-        if (distance < 150)
+
+        if (distance < radius)
         {
 
-            k++;
+            nearCounter++;
             if (y >= longitude[counters[e]])
             {
                 nlLat.push_back(latitude[counters[e]]);
@@ -282,6 +299,7 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
                 nlHum.push_back(data.humidity);
                 nlPres.push_back(data.pressure);
             }
+
             else
             {
                 nrLat.push_back(latitude[counters[e]]);
@@ -296,30 +314,34 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
                 nrPres.push_back(data.pressure);
             }
         }
+
         e++;
     }
-    qDebug() << QString::number(k);
+
+    //qDebug() << QString::number(k);
+
+    // очистка глобального вектора
     counters.clear();
-    for (double i : nlTemp) qDebug() << QString::number(i);
-    for (double i : nrTemp) qDebug() << QString::number(i);
+
+    //for (double i : nlTemp) qDebug() << QString::number(i);
+    //for (double i : nrTemp) qDebug() << QString::number(i);
 
     // определение используемой процедуры
-    if (c == 1)
+
+    if (isNearest) // если есть вышка в 20км
     {
-
-
         double dew = dewPoint(nlTemp[0], nlHum[0]);
 
         vector<string> Avgs = {to_string(nlTemp[0]), to_string(nlHum[0]), to_string(nlPres[0]), nlWD[0], nlWAS[0], to_string(dew)};
 
-        c = 0;
+        isNearest = false;
         return Avgs;
-
     }
 
-    else if ((k >= 10) && (nlLat.size() >= 3) && (nrLat.size() >= 3))
+    else if ((nearCounter >= 10) && (nlLat.size() >= 3) && (nrLat.size() >= 3)) // если ближайших вышек достаточно для рассчета метеопоказателей
     {
 
+        // удволетворяет критерию Стьюдента
         if (!calculateTStatistic(nlTemp, nrTemp) && !calculateTStatistic(nlHum, nrHum) && !calculateTStatistic(nlPres, nrPres))
         {
             double sum1 = accumulate(nlTemp.begin(), nlTemp.end(), 0) + accumulate(nrTemp.begin(), nrTemp.end(), 0);
@@ -327,7 +349,7 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
             double sum3 = accumulate(nlPres.begin(), nlPres.end(), 0) + accumulate(nrPres.begin(), nrPres.end(), 0);
             vector<string> allWD = nlWD;
             for (string dir : nrWD) allWD.push_back(dir);
-            string avgWD = mostCommonString(allWD);
+            string avgWD = calculateWindDirection(allWD);
             vector<string>allWAS = nlWAS;
             for (string was : nrWAS) allWAS.push_back(was);
             double avgWAS = calculateWindAverageSpeed(allWAS);
@@ -338,13 +360,14 @@ vector<string> mainProcess(double x, double y, string dateValue, string timeValu
 
 
             vector<string> Avgs = {to_string(sum1/(nlTemp.size()+nrTemp.size())), to_string(sum2/(nlHum.size()+nrHum.size())), to_string(sum3/(nlPres.size()+nrPres.size())), avgWD, to_string(avgWAS), to_string(dew)};
-            qDebug() << QString::number(counters.size());
+            // qDebug() << QString::number(counters.size());
             return Avgs;
         }
 
+        // не удволетворяет
         else
         {
-            qDebug() << "АААААААААААААААААААААААААА";
+            // qDebug() << "АААААААААААААААААААААААААА"; // крик души
             return {to_string(999.0)};
         }
     }
