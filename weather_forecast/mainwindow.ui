@@ -94,7 +94,11 @@ background-color: #3D8C40;
      </widget>
     </item>
     <item row="6" column="0">
-     <widget class="QLineEdit" name="radius"/>
+     <widget class="QLineEdit" name="radius">
+      <property name="text">
+       <string>300</string>
+      </property>
+     </widget>
     </item>
     <item row="3" column="0">
      <widget class="QLineEdit" name="day">

@@ -35,7 +35,7 @@ double medianAbsoluteDeviation(vector<double> arr, int n) {
 // Функция для определения порога аномальных значений
 double threshold(vector<double> arr, int n) {
     double mad = medianAbsoluteDeviation(arr, n);
-    return 3.0 * mad;
+    return 5 * mad;
 }
 
 double separatedAverage(string s) {

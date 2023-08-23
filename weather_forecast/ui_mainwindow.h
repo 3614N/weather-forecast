@@ -213,6 +213,7 @@ public:
         label_4->setText(QCoreApplication::translate("MainWindow", "\320\247\320\260\321\201", nullptr));
         pushButton->setText(QCoreApplication::translate("MainWindow", "\320\237\320\276\321\201\321\207\320\270\321\202\320\260\321\202\321\214", nullptr));
         latitude->setText(QCoreApplication::translate("MainWindow", "54", nullptr));
+        radius->setText(QCoreApplication::translate("MainWindow", "300", nullptr));
         day->setText(QCoreApplication::translate("MainWindow", "2.07", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt;\">\320\250\320\270\321\200\320\276\321\202\320\260</span></p></body></html>", nullptr));
         longitude->setText(QCoreApplication::translate("MainWindow", "45", nullptr));

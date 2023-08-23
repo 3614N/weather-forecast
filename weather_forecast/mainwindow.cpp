@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "averagenum.h"
-#include "ui_averagenum.h"
+//#include "ui_averagenum.h"
 #include <QDialog>
 #include <QPushButton>
 #include "libs.h"

@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "averagenum.h"
-#include "ui_averagenum.h"
+//#include "ui_averagenum.h"
 #include <QDialog>
 #include <QPushButton>
 #include "libs.h"
@@ -23,51 +23,52 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-int stop = 0;
+int stop = 0; // индикатор повторного поиска данных по иному сокращению времени
 
 void MainWindow::on_pushButton_clicked()
 {
     int k = 0;
-    double x = ui->latitude->text().toDouble();
-    double y = ui->longitude->text().toDouble();
-    string d = ui->day->text().toStdString();
-    string t = ui->hour->text().toStdString();
+    double lat = ui->latitude->text().toDouble();
+    double lon = ui->longitude->text().toDouble();
+    string day = ui->day->text().toStdString();
+    string hour = ui->hour->text().toStdString();
+    double rad = ui->radius->text().toDouble();
 
-    int hour = stoi(t);
-    if (hour >= 2 && hour <= 4){
-        t = "03";
-    } else if (hour >= 5 && hour <= 7){
-        t = "06";
-    } else if (hour >= 8  && hour <= 10) {
-        t = "09";
-    } else if (hour >= 11  && hour <= 13) {
-        t = "12";
-    }else if (hour >= 14 && hour <= 16) {
-        t = "15";
-    }else if (hour >= 17  && hour <= 19) {
-        t = "18";
-    } else if (hour >= 20) {
-        t = "21";
-    }else if (hour <= 1) {
-        t = "00";
+    int intHour = stoi(hour);
+    if (intHour >= 2 && intHour <= 4){
+        hour = "03";
+    } else if (intHour >= 5 && intHour <= 7){
+        hour = "06";
+    } else if (intHour >= 8  && intHour <= 10) {
+        hour = "09";
+    } else if (intHour >= 11  && intHour <= 13) {
+        hour = "12";
+    }else if (intHour >= 14 && intHour <= 16) {
+        hour = "15";
+    }else if (intHour >= 17  && intHour <= 19) {
+        hour = "18";
+    } else if (intHour >= 20) {
+        hour = "21";
+    }else if (intHour <= 1) {
+        hour = "00";
     }
-    vector<string> answer = mainProcess(x, y, d, t);
+    vector<string> answer = calculateWeather(lat, lon, day, hour, rad);
     QString xAnswer;
-    qDebug() << QString::fromStdString(answer[0]);
+    // qDebug() << QString::fromStdString(answer[0]);
 
     if (stod(answer[0]) == -999.0 && stop == 0)
     {
-        if (hour >= 0 && hour <= 6){
-            t = "03";
-        } else if (hour >= 7 && hour <= 12){
-            t = "09";
-        } else if (hour >= 13  && hour <= 18) {
-            t = "15";
-        } else if (hour >= 19  && hour <= 23) {
-            t = "21";
+        if (intHour >= 0 && intHour <= 6){
+            hour = "03";
+        } else if (intHour >= 7 && intHour <= 12){
+            hour = "09";
+        } else if (intHour >= 13  && intHour <= 18) {
+            hour = "15";
+        } else if (intHour >= 19  && intHour <= 23) {
+            hour = "21";
         }
         stop++;
-        answer = mainProcess(x, y, t, d);
+        answer = calculateWeather(lat, lon, day, hour, rad);
     }
     else if (stod(answer[0]) == -999.0 && stop != 0)
     {
@@ -83,7 +84,7 @@ void MainWindow::on_pushButton_clicked()
     {
         k++;
     }
-    qDebug() << QString::number(k);
+    // qDebug() << QString::number(k);
     QDialog *dialog = new QDialog(this);
     dialog->setWindowTitle("Answer");
     QLabel *label = new QLabel(xAnswer, dialog);

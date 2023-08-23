@@ -51,7 +51,7 @@ public:
     {
         if (AverageNum->objectName().isEmpty())
             AverageNum->setObjectName(QString::fromUtf8("AverageNum"));
-        AverageNum->resize(473, 389);
+        AverageNum->resize(520, 334);
         AverageNum->setStyleSheet(QString::fromUtf8("background-color: #FFFFFF;\n"
 ""));
         gridLayout_2 = new QGridLayout(AverageNum);

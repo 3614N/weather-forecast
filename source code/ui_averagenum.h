@@ -51,7 +51,7 @@ public:
     {
         if (AverageNum->objectName().isEmpty())
             AverageNum->setObjectName(QString::fromUtf8("AverageNum"));
-        AverageNum->resize(730, 475);
+        AverageNum->resize(520, 334);
         AverageNum->setStyleSheet(QString::fromUtf8("background-color: #FFFFFF;\n"
 ""));
         gridLayout_2 = new QGridLayout(AverageNum);
@@ -181,18 +181,18 @@ public:
     {
         AverageNum->setWindowTitle(QCoreApplication::translate("AverageNum", "Form", nullptr));
         label->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\230\320\275\321\204\320\276\321\200\320\274\320\260\321\206\320\270\321\217 \320\262 \320\264\320\260\320\275\320\275\320\276\320\271 \321\202\320\276\321\207\320\272\320\265:</span></p></body></html>", nullptr));
-        label_2->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\242\320\265\320\274\320\277\320\265\321\200\320\260\321\202\321\203\321\200\320\260:</span></p></body></html>", nullptr));
-        TempValue->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">0</span></p></body></html>", nullptr));
-        label_3->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\222\320\273\320\260\320\266\320\275\320\276\321\201\321\202\321\214:</span></p></body></html>", nullptr));
-        WetValue->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">0</span></p></body></html>", nullptr));
-        label_4->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\224\320\260\320\262\320\273\320\265\320\275\320\270\320\265</span></p></body></html>", nullptr));
-        PressureValue->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">0</span></p></body></html>", nullptr));
-        label_8->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\235\320\260\320\277\321\200\320\260\320\262\320\273. \320\262\320\265\321\202\321\200\320\260:</span></p></body></html>", nullptr));
-        windDir->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\275/\320\276</span></p></body></html>", nullptr));
-        label_9->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\241\320\272\320\276\321\200\320\276\321\201\321\202\321\214 \320\262\320\265\321\202\321\200\320\260:</span></p></body></html>", nullptr));
-        WindSpeed->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\275/\320\276</span></p></body></html>", nullptr));
-        label_10->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\242\320\276\321\207\320\272\320\260 \321\200\320\276\321\201\321\213:</span></p></body></html>", nullptr));
-        DewPoint->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\320\275/\320\276</span></p></body></html>", nullptr));
+        label_2->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">\320\242\320\265\320\274\320\277\320\265\321\200\320\260\321\202\321\203\321\200\320\260:</span></p></body></html>", nullptr));
+        TempValue->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">0</span></p></body></html>", nullptr));
+        label_3->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">\320\222\320\273\320\260\320\266\320\275\320\276\321\201\321\202\321\214:</span></p></body></html>", nullptr));
+        WetValue->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">0</span></p></body></html>", nullptr));
+        label_4->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">\320\224\320\260\320\262\320\273\320\265\320\275\320\270\320\265:</span></p></body></html>", nullptr));
+        PressureValue->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">0</span></p></body></html>", nullptr));
+        label_8->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">\320\235\320\260\320\277\321\200\320\260\320\262\320\273. \320\262\320\265\321\202\321\200\320\260:</span></p></body></html>", nullptr));
+        windDir->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">\320\275/\320\276</span></p></body></html>", nullptr));
+        label_9->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">\320\241\320\272\320\276\321\200\320\276\321\201\321\202\321\214 \320\262\320\265\321\202\321\200\320\260:</span></p></body></html>", nullptr));
+        WindSpeed->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">\320\275/\320\276</span></p></body></html>", nullptr));
+        label_10->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">\320\242\320\276\321\207\320\272\320\260 \321\200\320\276\321\201\321\213:</span></p></body></html>", nullptr));
+        DewPoint->setText(QCoreApplication::translate("AverageNum", "<html><head/><body><p><span style=\" font-size:18pt;\">\320\275/\320\276</span></p></body></html>", nullptr));
     } // retranslateUi
 
 };
