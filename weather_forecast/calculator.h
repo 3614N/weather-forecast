@@ -119,26 +119,30 @@ int executeAndSaveQuery(sqlite3* db, const std::string& query, const std::string
     return 0;
 }
 
+std::vector<int> mostFrequentIndices;
+
 // вычисление направления ветра
-string calculateWindDirection(const vector<string>& arr)
+string calculateWindDirection(const vector<string>& strings)
 {
-    unordered_map<string, int> freq_map;
-    for (const string& str : arr)
-    {
-        freq_map[str]++;
-    }
-    string most_common;
-    int max_frequency = 0;
-    for (const auto& pair : freq_map)
-    {
-        if (pair.second > max_frequency)
-        {
-            max_frequency = pair.second;
-            most_common = pair.first;
+    std::string mostFrequentString;
+    int maxFrequency = 0;
+
+    for (int i = 0; i < strings.size(); ++i) {
+        const std::string& str = strings[i];
+        int frequency = std::count(strings.begin(), strings.end(), str);
+
+        if (frequency > maxFrequency) {
+            maxFrequency = frequency;
+            mostFrequentString = str;
+            mostFrequentIndices.clear();
+            mostFrequentIndices.push_back(i);
+        } else if (frequency == maxFrequency) {
+            mostFrequentIndices.push_back(i);
         }
     }
-    return most_common;
+    return mostFrequentString;
 }
+
 
 // вычисление средней скорости ветра
 double calculateWindAverageSpeed(vector<string> allWAS)
@@ -157,8 +161,13 @@ double calculateWindAverageSpeed(vector<string> allWAS)
             dWAS.push_back(firstValue/secondValue);
         }
     }
-    double sum = accumulate(dWAS.begin(), dWAS.end(), 0);
-    double average = static_cast<double>(sum) / dWAS.size();
+
+    double sum;
+    for (int i : mostFrequentIndices){
+        sum += dWAS[i];
+    }
+    //double sum = accumulate(dWAS.begin(), dWAS.end(), 0);
+    double average = sum / mostFrequentIndices.size();
     return average;
 }
 
@@ -232,17 +241,13 @@ double interpolation(vector<double> latitudes, vector<double> longitudes, vector
     for (size_t i = 0; i < nu1.size(); i++)
     {
         first += 1/h[i]*nu1[i];
-        cout << first << endl;
         second += 1/h[i];
-        cout << second << endl << endl;
-
     }
     averageNu = first/second;
 
     aDistance.clear();
     bDistance.clear();
     cDistance.clear();
-    cout << averageNu << endl;
     return averageNu;
 
 }
@@ -407,11 +412,11 @@ vector<string> calculateWeather(double x, double y, string dateValue, string tim
 
     for (int i = 0; i < nlLat.size(); i++)
     {
-        cout << nlLat[i] << endl << nlLon[i] << endl << nlTemp[i] << endl << endl;
+        cout << nlHum[i]<< endl;
     }
     for (int i = 0; i < nrLat.size(); i++)
     {
-        cout << nrLat[i] << endl << nrLon[i] << endl << nrTemp[i] << endl << endl;
+        cout << nrHum[i]<< endl;
     }
 
     // определение используемой процедуры
@@ -433,8 +438,13 @@ vector<string> calculateWeather(double x, double y, string dateValue, string tim
         for (string was : nrWAS) allWAS.push_back(was);
         double avgWAS = calculateWindAverageSpeed(allWAS);
 
+        for (int i = 0; i < mostFrequentIndices.size(); i++){
+            cout << mostFrequentIndices[i] << endl;
+        }
+        mostFrequentIndices.clear();
+
         // удволетворяет критерию Стьюдента
-        if (!calculateTStatistic(nlTemp, nrTemp) && !calculateTStatistic(nlHum, nrHum) && !calculateTStatistic(nlPres, nrPres))
+        /*if (!calculateTStatistic(nlTemp, nrTemp) && !calculateTStatistic(nlHum, nrHum) && !calculateTStatistic(nlPres, nrPres))
         {
 
             double sum1 = accumulate(nlTemp.begin(), nlTemp.end(), 0) + accumulate(nrTemp.begin(), nrTemp.end(), 0);
@@ -451,11 +461,11 @@ vector<string> calculateWeather(double x, double y, string dateValue, string tim
             vector<string> Avgs = {to_string(sum1/(nlTemp.size()+nrTemp.size())), to_string(sum2/(nlHum.size()+nrHum.size())), to_string(sum3/(nlPres.size()+nrPres.size())), avgWD, to_string(avgWAS), to_string(dew)};
 
             return Avgs;
-        }
+        }*/
 
         // не удволетворяет
-        else
-        {
+        //else
+        //{
             vector<double> allLat = nlLat;
             for (double i : nrLat) allLat.push_back(i);
             vector<double> allLon = nlLon;
@@ -472,7 +482,7 @@ vector<string> calculateWeather(double x, double y, string dateValue, string tim
             vector<string> Avgs = {to_string(interpolation(allLat, allLon, allTemp, x, y)), to_string(interpolation(allLat, allLon, allHum, x, y)), to_string(interpolation(allLat, allLon, allPres, x, y)), avgWD, to_string(avgWAS), to_string(dew)};
 
             return Avgs;
-        }
+        //}
     }
     else return {to_string(-999.0)}; // :)
 }
